@@ -15,7 +15,7 @@ let btreeS_isempty(bt_tree : 'a btreeS) : bool =
 
 let btreeS_root(bt_tree : 'a btreeS) : 'a =
   match bt_tree with
-  | BT_EMPTY -> failwith("L'arbre est vide")
+  | BT_EMPTY -> failwith("root : L'arbre est vide")
   | BT_ROOTING(x, g, d) -> x
 ;;
 
