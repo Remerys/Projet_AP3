@@ -50,28 +50,28 @@ let bst_lbuild(l : 'a list) : 'a t_bst =
 ;;
 
 let rec bst_isBst(bst : 'a t_bst) : bool =
-  if bst_isempty(bst) (*bst empty*)
+  if bst_isempty(bst) (* bst empty *)
   then true
   else
     let (g, d) : 'a t_bst * 'a t_bst = (bst_subleft(bst), bst_subright(bst))
     and r : 'a = bst_root(bst)
     in
-    if bst_isempty(g) && bst_isempty(d) (*leaf*)
+    if bst_isempty(g) && bst_isempty(d) (* leaf *)
     then true
     else
-      if bst_isempty(g) (*bst left empty*)
+      if bst_isempty(g) (* bst left empty *)
       then
         if bst_root(d) < r
         then false
         else bst_isBst(d)
       else
-        if bst_isempty(d) (*bst right empty*)
+        if bst_isempty(d) (* bst right empty *)
         then
           if bst_root(g) > r
           then false
           else bst_isBst(g)
         else
-          if bst_root(g) > r || bst_root(d) < r (*2 sub*)
+          if bst_root(g) > r || bst_root(d) < r (* 2 sub *)
           then false
           else bst_isBst(g) && bst_isBst(d)
 ;;
@@ -83,3 +83,49 @@ btree_to_string(leaf);;
 bst_isBst(leaf);;
 
 
+(* ------------------------------------------------------------------------------------------------------------------------------- *)
+
+let rec bst_seek(tree, element : 'a t_bst * 'a) : 'a t_bst =
+  let root = btreeS_root(tree)
+   and subleft = btreeS_subleft(tree)
+   and subright = btreeS_subright(tree)
+  in
+  if element = root
+  then tree
+  else if element < root
+  then bst_seek(subleft, element)
+  else bst_seek(subright, element)
+;;
+
+let rec bst_max(tree : 'a t_bst) : 'a =
+  let root = btreeS_root(tree)
+   and subright = btreeS_subright(tree)
+  in
+  if subright = btreeS_empty()
+  then root
+  else bst_max(subright)
+;;
+
+let rec bst_deletemax(tree : 'a t_bst) : 'a t_bst =
+  if btreeS_subright(tree) = btreeS_empty()
+  then btreeS_subleft(tree)
+  else btreeS_rooting(btreeS_root(tree), btreeS_subleft(tree), bst_deletemax(btreeS_subright(tree)))
+;;
+
+let rec bst_delete(tree, element : 'a t_bst * 'a) : 'a t_bst =
+  let root = btreeS_root(tree)
+   and subleft = btreeS_subleft(tree)
+   and subright = btreeS_subright(tree)
+  in
+  if btreeS_isempty(tree)
+  then btreeS_empty()
+  else if element < root
+  then btreeS_rooting(root, bst_delete(subleft, element), subright)
+  else if element > root
+  then btreeS_rooting(root, subleft, bst_delete(subright, element))
+  else if element = root
+  then subleft
+  else if element = root && not(btreeS_isempty(subright))
+  then subright
+  else btreeS_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
+;;
