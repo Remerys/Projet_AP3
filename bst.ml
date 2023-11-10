@@ -77,10 +77,10 @@ let rec bst_isBst(bst : 'a t_bst) : bool =
 ;;
 
 
-
+let no_bst : int btreeS = btreeS_rooting(2, btreeS_empty(), btreeS_rooting(1, btreeS_empty(), btreeS_empty()));;
 let leaf : int t_bst = bst_lbuild([4;2;1;8;16]);;
 btree_to_string(leaf);;
-bst_isBst(leaf);;
+bst_isBst(no_bst);;
 
 
 (* ------------------------------------------------------------------------------------------------------------------------------- *)
