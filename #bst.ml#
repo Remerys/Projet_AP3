@@ -1,7 +1,7 @@
 #load "btreeS.cmo";;
 #load "useBtree.cmo";;
 open BtreeS;;
-open UseBtree;;
+open Usebtree;;
 
 type 'a t_bst = 'a btreeS;;
 
@@ -114,10 +114,10 @@ let rec bst_delete(tree, element : 'a t_bst * 'a) : 'a t_bst =
       if element > r
       then bst_rooting(r, subleft, bst_delete(subright, element))
       else
-        if not(btreeS_isempty(subleft)) && not(btreeS_isempty(subright))
-        then btreeS_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
+        if not(bst_isempty(subleft)) && not(bst_isempty(subright))
+        then bst_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
         else
-          if not(btreeS_isempty(subright))
+          if not(bst_isempty(subright))
           then subright
           else subleft
 ;;

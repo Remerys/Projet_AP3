@@ -70,7 +70,7 @@ let rec btree_to_string_int(bt_tree : int btreeS) : string =
   if btreeS_isempty(bt_tree)
   then "EMPTY"
   else
-  "(" ^ string_of_int(btreeS_root(bt_tree)) ^ "," ^ btree_to_string_int(btreeS_subleft(bt_tree)) ^ "," ^ int_btree_to_string_int(btreeS_subright(bt_tree)) ^ ")"
+  "(" ^ string_of_int(btreeS_root(bt_tree)) ^ "," ^ btree_to_string_int(btreeS_subleft(bt_tree)) ^ "," ^ btree_to_string_int(btreeS_subright(bt_tree)) ^ ")"
 ;;
 
 let rec btree_to_string(bt_tree : string btreeS) : string =
