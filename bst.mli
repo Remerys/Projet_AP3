@@ -50,7 +50,7 @@ val bst_isBst : 'a t_bst -> bool;;
 val power : int * int -> int;;
 
 (* Create a binary search tree based on a given size *)
-val bst_rnd_create : int -> int t_bst;;
+val bst_rnd_create : unit -> int t_bst;;
 
 (* Check the imbalance of a binary search tree *)
-val imbalance_tree : 'a t_bst -> 'a
+val bst_imbalance : int t_bst -> int;;

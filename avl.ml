@@ -59,17 +59,25 @@ let avl_rgd(t : 'a t_avl) : 'a t_avl =
     avl_rd(bst_rooting(root, new_g, d))
 ;;
 
-
-let t : 'a t_avl = bst_rooting("r",
-                               bst_rooting("p",
-                                            bst_rooting("T", bst_empty(), bst_empty()),
-                                            bst_rooting("q",
-                                                        bst_rooting("U", bst_empty(), bst_empty()),
-                                                        bst_rooting("V", bst_empty(), bst_empty())
-                                              )
-                                 ),
-                               bst_rooting("W", bst_empty(), bst_empty())
-                     )
+let avl_rebalance(t : 'a t_avl) : 'a t_avl =
+let imbalance : int = bst_imbalance(t) in
+  if imbalance > 2 || imbalance < -2
+  then failwith("avl_relance : too unbalanced")
+  else
+    if imbalance = -1 || imbalance = 0 || imbalance = 1
+    then t
+    else
+      let imbalance_g : int = bst_imbalance(bst_subleft(t))
+      and imbalance_d : int = bst_imbalance(bst_subright(t))
+      in
+      if imbalance = 2 && imbalance_g = 1
+      then avl_rd(t)
+      else
+        if imbalance = 2 && imbalance_g = -1
+        then avl_rgd(t)
+        else
+           if imbalance = -2 && imbalance_d = -1
+           then avl_rg(t)
+           else avl_rdg(t)
 ;;
-avl_to_string(t);;
-avl_to_string(avl_rgd(t));;
+

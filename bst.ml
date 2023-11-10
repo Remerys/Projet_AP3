@@ -168,22 +168,22 @@ let rec bst_rnd_create_aux(list_length, list : int * int list) : int list =
   else bst_rnd_create_aux(list_length-1, random_number::list)
 ;;
 
-let bst_rnd_create(list_length : int) : int t_bst =
-  let random_list : int list = bst_rnd_create_aux(list_length, [])
+let bst_rnd_create() : int t_bst =
+  let random_number : int = Random.int(200) (* Générer un nombre aléatoire entre 0 et 199 *)
+  in
+  let random_list : 'a list = bst_rnd_create_aux(random_number, [])
   in
   bst_lbuild(random_list)
 ;;
 
-let imbalance_tree(tree : 'a t_bst) : 'a =
+let bst_imbalance(tree : int t_bst) : int =
   if bst_isempty(tree)
   then 0
   else
     let subleft : 'a t_bst = bst_subleft(tree)
     and subright : 'a t_bst = bst_subright(tree)
     in
-    if bst_isempty(tree)
-    then 0
-    else height(subleft) - height(subright)
+    height(subleft) - height(subright)
 ;;
 
 let test() : float =
@@ -193,7 +193,7 @@ let test() : float =
   for i = 1 to sample do
     let tree : 'a t_bst = bst_rnd_create()
     in
-    average_imbalance := !average_imbalance + imbalance_tree(tree)
+    average_imbalance := !average_imbalance + bst_imbalance(tree)
   done;
 
   let res : float = float_of_int(!average_imbalance)/.float_of_int(sample) in
