@@ -54,3 +54,6 @@ val create_random_list : 'a * 'a list -> 'a list;;
 
 (* Create a binary search tree based on a given size *)
 val bst_rnd_create : 'a -> 'a t_bst;;
+
+(* Check the imbalance of a binary search tree *)
+val imbalance_tree : 'a t_bst -> 'a
