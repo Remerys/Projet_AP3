@@ -101,25 +101,28 @@ let rec bst_deletemax(tree : 'a t_bst) : 'a t_bst =
 ;;
 
 let rec bst_delete(tree, element : 'a t_bst * 'a) : 'a t_bst =
-  let r : 'a = bst_root(tree)
-  and subleft : 'a t_bst = bst_subleft(tree)
-  and subright : 'a t_bst = bst_subright(tree)
-  in
   if bst_isempty(tree)
-  then bst_empty()
+  then failwith("bst_deletemax : l'arbre est vide")
   else
-    if element < r
-    then bst_rooting(r, bst_delete(subleft, element), subright)
+    let r : 'a = bst_root(tree)
+    and subleft : 'a t_bst = bst_subleft(tree)
+    and subright : 'a t_bst = bst_subright(tree)
+    in
+    if bst_isempty(tree)
+    then bst_empty()
     else
-      if element > r
-      then bst_rooting(r, subleft, bst_delete(subright, element))
+      if element < r
+      then bst_rooting(r, bst_delete(subleft, element), subright)
       else
-        if not(btreeS_isempty(subleft)) && not(btreeS_isempty(subright))
-        then btreeS_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
+        if element > r
+        then bst_rooting(r, subleft, bst_delete(subright, element))
         else
-          if not(btreeS_isempty(subright))
-          then subright
-          else subleft
+          if not(btreeS_isempty(subleft)) && not(btreeS_isempty(subright))
+          then btreeS_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
+          else
+            if not(btreeS_isempty(subright))
+            then subright
+            else subleft
 ;;
 
 let rec bst_isBst(bst : 'a t_bst) : bool =
@@ -158,7 +161,7 @@ let rec power (number, exponent : int * int) : int =
 let rec bst_rnd_create_aux(list_length, list : int * int list) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
-  let random_number : int = Random.int borne (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
+  let random_number : int = Random.int(borne) (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
   in
   if list_length = 0
   then list
@@ -171,3 +174,37 @@ let bst_rnd_create(list_length : int) : int t_bst =
   bst_lbuild(random_list)
 ;;
 
+let imbalance_tree(tree : 'a t_bst) : 'a =
+  if bst_isempty(tree)
+  then 0
+  else
+    let subleft : 'a t_bst = bst_subleft(tree)
+    and subright : 'a t_bst = bst_subright(tree)
+    in
+    if bst_isempty(tree)
+    then 0
+    else height(subleft) - height(subright)
+;;
+
+let test() : float =
+  let sample : int = 10000
+  and average_imbalance : int ref = ref 0
+  in
+  for i = 1 to sample do
+    let tree : 'a t_bst = bst_rnd_create()
+    in
+    average_imbalance := !average_imbalance + imbalance_tree(tree)
+  done;
+
+  let res : float = float_of_int(!average_imbalance)/.float_of_int(sample) in
+  res
+;;
+
+let test2() : float list =
+  let res : float list ref = ref []
+  in
+  for i = 0 to 50 do
+    res := test()::!res
+  done;
+  !res
+;;

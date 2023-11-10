@@ -51,3 +51,6 @@ val power : int * int -> int;;
 
 (* Create a binary search tree based on a given size *)
 val bst_rnd_create : int -> int t_bst;;
+
+(* Check the imbalance of a binary search tree *)
+val imbalance_tree : 'a t_bst -> 'a
