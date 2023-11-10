@@ -1,5 +1,5 @@
-#load "btreeS.cmo";;
-#load "useBtree.cmo";;
+(*#load "btreeS.cmo";;
+#load "useBtree.cmo";;*)
 open BtreeS;;
 open UseBtree;;
 
@@ -149,24 +149,24 @@ let rec bst_isBst(bst : 'a t_bst) : bool =
           else bst_isBst(g) && bst_isBst(d)
 ;;
 
-let rec power (number, exponent : 'a * 'a) : 'a =
+let rec power (number, exponent : int * int) : int =
   if exponent = 0
   then 1
   else number * power (number, exponent - 1)
 ;;
 
-let rec create_random_list(list_length, list : 'a * 'a list) : 'a list =
-  let borne : int = power(2, 7) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
+let rec bst_rnd_create_aux(list_length, list : int * int list) : int list =
+  let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
   let random_number : int = Random.int borne (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
   in
   if list_length = 0
   then list
-  else create_random_list(list_length-1, random_number::list)
+  else bst_rnd_create_aux(list_length-1, random_number::list)
 ;;
 
-let bst_rnd_create(list_length : 'a) : 'a t_bst =
-  let random_list : 'a list = create_random_list(list_length, [])
+let bst_rnd_create(list_length : int) : int t_bst =
+  let random_list : int list = bst_rnd_create_aux(list_length, [])
   in
   bst_lbuild(random_list)
 ;;

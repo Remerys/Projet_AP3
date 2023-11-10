@@ -5,7 +5,7 @@ type 'a t_bst;;
 val bst_isempty : 'a t_bst -> bool;;
 
 (* Create an empty binary search tree *)
-val bst_empty() -> 'a t_bst;;
+val bst_empty : unit -> 'a t_bst;;
 
 (* Returns the root of the binary search tree *)
 val bst_root : 'a t_bst -> 'a;;
@@ -29,7 +29,7 @@ val bst_lbuild : 'a list -> 'a t_bst;;
 val bst_isBst : 'a t_bst -> bool;;
 
 (* Search an element in a binary search tree *)
-val bst_seek : 'a t_bst * 'a -> 'a t_bst;;
+val bst_seek : 'a t_bst * 'a -> bool;;
 
 (* Return the min element of a binary search tree *)
 val bst_min : 'a t_bst -> 'a;;
@@ -47,10 +47,7 @@ val bst_delete : 'a t_bst * 'a -> 'a t_bst;;
 val bst_isBst : 'a t_bst -> bool;;
 
 (* Calculate the power of a number *)
-val power : 'a * 'a -> 'a;;
-
-(* Create a random list *)
-val create_random_list : 'a * 'a list -> 'a list;;
+val power : int * int -> int;;
 
 (* Create a binary search tree based on a given size *)
-val bst_rnd_create : 'a -> 'a t_bst;;
+val bst_rnd_create : int -> int t_bst;;
