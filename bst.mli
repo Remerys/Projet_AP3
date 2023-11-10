@@ -39,3 +39,12 @@ val rec bst_deletemax : 'a t_bst -> 'a t_bst;;
 
 (* Delete an element of a binary search tree *)
 val rec bst_delete : 'a t_bst * 'a -> 'a t_bst;;
+
+(* Calculate the power of a number *)
+val rec power : 'a * 'a -> 'a
+
+(* Create a random list *)
+val rec create_random_list : 'a * 'a list -> 'a list
+
+(* Create a binary search tree based on a given size *)
+val bst_rnd_create : 'a -> 'a t_bst
