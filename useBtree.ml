@@ -6,7 +6,7 @@ let rec size(bt_tree : 'a btreeS) : int =
   else 1 + size(btreeS_subleft(bt_tree)) + size(btreeS_subright(bt_tree))
 ;;
 
-let max(a, b : int * int) : int =
+let max(a, b : 'a * 'a) : 'a =
   if (a > b)
   then a
   else b
