@@ -1,3 +1,5 @@
+open BtreeS;;
+
 (* Give the size of a binary tree *)
 val size : 'a btreeS -> int;;
 
