@@ -81,3 +81,18 @@ let imbalance : int = bst_imbalance(t) in
            else avl_rdg(t)
 ;;
 
+let avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
+  let empty : 'a t_bst = bst_empty()
+  in
+  if bst_isempty(t)
+  then bst_rooting(element, empty, empty)
+  else
+    let root : 'a = bst_root(tree)
+    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
+    in
+    if element < root
+    then rebalance(bst_rooting(root, avl_add(subleft, subright), subright))
+    else if element > root
+    then rebalance(bst_rooting(root, subleft, avl_add(subright, element)))
+    else bst_rooting(root, subleft, subright)
+;;
