@@ -84,15 +84,45 @@ let imbalance : int = bst_imbalance(t) in
 let avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_bst = bst_empty()
   in
-  if bst_isempty(t)
+  if bst_isempty(tree)
   then bst_rooting(element, empty, empty)
   else
     let root : 'a = bst_root(tree)
     and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
     in
     if element < root
-    then rebalance(bst_rooting(root, avl_add(subleft, subright), subright))
+    then avl_rebalance(bst_rooting(root, avl_add(subleft, subright), subright))
     else if element > root
-    then rebalance(bst_rooting(root, subleft, avl_add(subright, element)))
+    then avl_rebalance(bst_rooting(root, subleft, avl_add(subright, element)))
     else bst_rooting(root, subleft, subright)
+;;
+
+let avl_delete_max(tree : 'a t_avl) : 'a t_avl =
+  if bst_isempty(tree)
+  then failwith("avl_delete_max : AVL is empty")
+  else
+    let root : 'a = bst_root(tree)
+    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
+    in
+    if bst_isempty(subright)
+    then subleft
+    else avl_rebalance(bst_rooting(root, subleft, avl_delete_max(subright)))
+;;
+
+let avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
+  if bst_isempty(tree)
+  then failwith("avl_delete : AVL is empty")
+  else
+    let root : 'a = bst_root(tree)
+    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
+    in
+    if element < root
+    then avl_rebalance(bst_rooting(root, avl_delete(subleft, element), subright))
+    else if element > root
+    then avl_rebalance(bst_rooting(root, subleft, avl_delete(subright, element)))
+    else if root && not(bst_isemptysubleft) && not(bst_isempty(subright))
+    then avl_rebalance(bst_rooting(max(subleft), avl_delete_max(subleft), subright))
+    else if element = root && not(bst_isempty(subright))
+    then subright
+    else subleft
 ;;
