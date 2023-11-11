@@ -54,3 +54,6 @@ val bst_rnd_create : unit -> int t_bst;;
 
 (* Check the imbalance of a binary search tree *)
 val bst_imbalance : int t_bst -> int;;
+
+(* Calculate the average imbalance of a binary search tree *)
+val bst_average_imbalance : unit -> float list;;

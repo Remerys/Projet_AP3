@@ -1,3 +1,5 @@
+(*#load "btreeS.cmo";;
+#load "useBtree.cmo";;*)
 open BtreeS;;
 open UseBtree;;
 
@@ -161,20 +163,24 @@ let rec power(number, exponent : int * int) : int =
     number * power (number, exponent - 1)
 ;;
 
-let rec bst_rnd_create_aux(list_length, list : int * int list) : int list =
+let bst_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
-  let random_number : int = Random.int(borne) (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
+  let rec aux(n, list) : int list =
+    if n = 0
+    then list
+    else
+      let random_number = Random.int(borne) (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
+      in
+      aux((n - 1), (random_number::list))
   in
-  if list_length = 0
-  then list
-  else bst_rnd_create_aux(list_length-1, random_number::list)
+  List.rev(aux(list_length, []))
 ;;
 
 let bst_rnd_create() : int t_bst =
   let random_number : int = Random.int(200) (* Générer un nombre aléatoire entre 0 et 199 *)
   in
-  let random_list : 'a list = bst_rnd_create_aux(random_number, [])
+  let random_list : 'a list = bst_rnd_create_aux(random_number)
   in
   bst_lbuild(random_list)
 ;;
@@ -189,7 +195,7 @@ let bst_imbalance(tree : int t_bst) : int =
     height(subleft) - height(subright)
 ;;
 
-let test() : float =
+let bst_average_imbalance_aux() : float =
   let sample : int = 10000
   and average_imbalance : int ref = ref 0
   in
@@ -203,11 +209,11 @@ let test() : float =
   res
 ;;
 
-let test2() : float list =
+let bst_average_imbalance() : float list =
   let res : float list ref = ref []
   in
-  for i = 0 to 50 do
-    res := test()::!res
+  for i = 0 to 10 do
+    res := bst_average_imbalance_aux()::!res
   done;
   !res
 ;;
