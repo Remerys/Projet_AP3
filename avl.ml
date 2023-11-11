@@ -126,3 +126,57 @@ let avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
     then subright
     else subleft
 ;;
+
+
+(* -------------------------------------------------------------------- *)
+(* A VERIFIER *)
+(* VOIR SI ON PEUT PAS PRENDRE LES FONCTIONS DE BST DIRECTEMENT EN AJOUTANT JUSTE LE AVL_REBALANCE A CHAQUE AJOUT *)
+
+
+let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
+  let empty : 'a t_bst = bst_empty()
+  in
+  if (bst_isempty(tree))
+  then bst_rooting(element, empty, empty)
+  else
+    let root : 'a = bst_root(tree) in
+    if (element < root)
+    then
+      bst_rooting(root, bst_linsert(bst_subleft(tree), element), bst_subright(tree));
+      avl_rebalance(tree);
+    else
+      bst_rooting(root, bst_subleft(tree), bst_linsert(bst_subright(tree), element));
+      avl_rebalance(tree);
+;;
+
+let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
+  if (list = [])
+  then tree
+  else bst_lbuild_aux(List.tl(list), bst_linsert(tree, List.hd(list)))
+;;
+
+let avl_lbuild(list : 'a list) : 'a t_avl =
+  avl_lbuild_aux(list, bst_empty())
+;;
+
+let avl_rnd_create_aux(list_length : int) : int list =
+  let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
+  in
+  let rec aux(n, list) : int list =
+    if n = 0
+    then list
+    else
+      let random_number = Random.int(borne) (* Générer un nombre aléatoire entre 0 et 1 073 741 822 *)
+      in
+      aux((n - 1), (random_number::list))
+  in
+  List.rev(aux(list_length, []))
+;;
+
+let avl_rnd_create() : int t_avl =
+  let random_number : int = Random.int(200) (* Générer un nombre aléatoire entre 0 et 199 *)
+  in
+  let random_list : 'a list = avl_rnd_create_aux(random_number)
+  in
+  avl_lbuild(random_list)
+;;
