@@ -1,5 +1,3 @@
-(*#load "btreeS.cmo";;
-#load "useBtree.cmo";;*)
 open BtreeS;;
 open UseBtree;;
 
@@ -152,10 +150,15 @@ let rec bst_isBst(bst : 'a t_bst) : bool =
           else bst_isBst(g) && bst_isBst(d)
 ;;
 
-let rec power (number, exponent : int * int) : int =
-  if exponent = 0
-  then 1
-  else number * power (number, exponent - 1)
+let rec power(number, exponent : int * int) : int =
+  if exponent = 0 then 1
+  else if exponent mod 2 = 0
+  then
+    let half_power = power (number, exponent / 2)
+    in
+    half_power * half_power
+  else
+    number * power (number, exponent - 1)
 ;;
 
 let rec bst_rnd_create_aux(list_length, list : int * int list) : int list =
