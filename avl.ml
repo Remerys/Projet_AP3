@@ -59,8 +59,9 @@ let avl_rgd(t : 'a t_avl) : 'a t_avl =
     avl_rd(bst_rooting(root, new_g, d))
 ;;
 
+(*
 let avl_rebalance(t : 'a t_avl) : 'a t_avl =
-let imbalance : int = bst_imbalance(t) in
+  let imbalance : int = bst_imbalance(t) in
   if imbalance > 2 || imbalance < -2
   then failwith("avl_relance : too unbalanced")
   else
@@ -79,7 +80,28 @@ let imbalance : int = bst_imbalance(t) in
            if imbalance = -2 && imbalance_d = -1
            then avl_rg(t)
            else avl_rdg(t)
-;;
+;;*)
+let avl_rebalance(t : int t_avl) : 'a t_avl =
+  let r : int  = avl_root(t) in
+  if r > 2 || r < -2
+  then failwith("avl_relance : too unbalanced")
+  else
+    if r = -1 || r = 0 || r = 1
+    then t
+    else
+      let g : 'a t_avl = bst_subleft(t)
+      and d : 'a t_avl = bst_subright(t)
+      in
+      if r = 2 && avl_root(g) = 1
+      then avl_rd(t)
+      else
+        if r = 2 && avl_root(g) = -1
+        then avl_rgd(t)
+        else
+           if r = -2 && avl_root(d) = -1
+           then avl_rg(t)
+           else avl_rdg(t)
+
 
 let avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_bst = bst_empty()
@@ -142,11 +164,15 @@ let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
     let root : 'a = bst_root(tree) in
     if (element < root)
     then
-      bst_rooting(root, bst_linsert(bst_subleft(tree), element), bst_subright(tree));
-      avl_rebalance(tree);
+      (
+        bst_rooting(root, bst_linsert(bst_subleft(tree), element), bst_subright(tree));
+        avl_rebalance(tree);
+      )
     else
-      bst_rooting(root, bst_subleft(tree), bst_linsert(bst_subright(tree), element));
-      avl_rebalance(tree);
+      (
+        bst_rooting(root, bst_subleft(tree), bst_linsert(bst_subright(tree), element));
+        avl_rebalance(tree);
+      )
 ;;
 
 let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
