@@ -6,70 +6,101 @@ open Bst;;
 
 type 'a t_avl = 'a t_bst;;
 
+let avl_isempty(avl : 'a t_avl) : bool =
+  bst_isempty(avl)
+;;
+
+let avl_empty() : 'a t_avl =
+  bst_empty()
+;;
+
+let avl_root(avl : 'a t_avl) : 'a =
+  bst_root(avl)
+;;
+
+let avl_rooting(x, g, d : 'a * 'a t_avl * 'a t_avl) : 'a t_avl =
+  bst_rooting(x, g, d)
+;;
+
+let avl_subleft(avl : 'a t_avl) : 'a t_avl =
+  bst_subleft(avl)
+;;
+
+let avl_subright(avl : 'a t_avl) : 'a t_avl =
+  bst_subright(avl)
+;;
+
 let rec avl_to_string(avl : string t_avl) : string =
-  if bst_isempty(avl)
+  if avl_isempty(avl)
   then "EMPTY"
   else
-  "(" ^ bst_root(avl) ^ "," ^ avl_to_string(bst_subleft(avl)) ^ "," ^ avl_to_string(bst_subright(avl)) ^ ")"
+  "(" ^ avl_root(avl) ^ "," ^ avl_to_string(avl_subleft(avl)) ^ "," ^ avl_to_string(avl_subright(avl)) ^ ")"
+;;
+
+let rec avl_to_string_int(avl : int t_avl) : string =
+  if avl_isempty(avl)
+  then "EMPTY"
+  else
+  "(" ^ string_of_int(avl_root(avl)) ^ "," ^ avl_to_string_int(avl_subleft(avl)) ^ "," ^ avl_to_string_int(avl_subright(avl)) ^ ")"
 ;;
 
 let avl_rg(t : 'a t_avl) : 'a t_avl =
-  if bst_isempty(t)
+  if avl_isempty(t)
   then failwith("avl_rg : avl is empty")
   else
-    let root : 'a = bst_root(t)
-    and (g, d) : 'a t_bst * 'a t_bst = (bst_subleft(t), bst_subright(t))
+    let root : 'a = avl_root(t)
+    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    if bst_isempty(d)
+    if avl_isempty(d)
     then failwith("avl_rg : avl subright is empty")
-    else bst_rooting(bst_root(d), bst_rooting(root, g, bst_subleft(d)), bst_subright(d))
+    else avl_rooting(avl_root(d), avl_rooting(root, g, avl_subleft(d)), avl_subright(d))
 ;;
 
 let avl_rd(t : 'a t_avl) : 'a t_avl =
-  if bst_isempty(t)
+  if avl_isempty(t)
   then failwith("avl_rd : avl is empty")
   else
-    let root : 'a = bst_root(t)
-    and (g, d) : 'a t_bst * 'a t_bst = (bst_subleft(t), bst_subright(t))
+    let root : 'a = avl_root(t)
+    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    if bst_isempty(g)
+    if avl_isempty(g)
     then failwith("avl_rg : avl subleft is empty")
-    else bst_rooting(bst_root(g), bst_subleft(g), bst_rooting(root, bst_subright(g), d))
+    else avl_rooting(avl_root(g), avl_subleft(g), avl_rooting(root, avl_subright(g), d))
 ;;
 
 let avl_rdg(t : 'a t_avl) : 'a t_avl =
-  if bst_isempty(t)
+  if avl_isempty(t)
   then failwith("avl_rdg : avl is empty")
   else
-    let root : 'a = bst_root(t)
-    and (g, d) : 'a t_bst * 'a t_bst = (bst_subleft(t), bst_subright(t))
+    let root : 'a = avl_root(t)
+    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    let new_d : 'a t_bst = avl_rd(d) in
-    avl_rg(bst_rooting(root, g, new_d))
+    let new_d : 'a t_avl = avl_rd(d) in
+    avl_rg(avl_rooting(root, g, new_d))
 ;;
 
 let avl_rgd(t : 'a t_avl) : 'a t_avl =
-  if bst_isempty(t)
+  if avl_isempty(t)
   then failwith("avl_rgd : avl is empty")
   else
-    let root : 'a = bst_root(t)
-    and (g, d) : 'a t_bst * 'a t_bst = (bst_subleft(t), bst_subright(t))
+    let root : 'a = avl_root(t)
+    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    let new_g : 'a t_bst = avl_rg(g) in
-    avl_rd(bst_rooting(root, new_g, d))
+    let new_g : 'a t_avl = avl_rg(g) in
+    avl_rd(avl_rooting(root, new_g, d))
 ;;
 
 (*
 let avl_rebalance(t : 'a t_avl) : 'a t_avl =
-  let imbalance : int = bst_imbalance(t) in
+  let imbalance : int = avl_imbalance(t) in
   if imbalance > 2 || imbalance < -2
   then failwith("avl_relance : too unbalanced")
   else
     if imbalance = -1 || imbalance = 0 || imbalance = 1
     then t
     else
-      let imbalance_g : int = bst_imbalance(bst_subleft(t))
-      and imbalance_d : int = bst_imbalance(bst_subright(t))
+      let imbalance_g : int = avl_imbalance(avl_subleft(t))
+      and imbalance_d : int = avl_imbalance(avl_subright(t))
       in
       if imbalance = 2 && imbalance_g = 1
       then avl_rd(t)
@@ -81,73 +112,103 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
            then avl_rg(t)
            else avl_rdg(t)
 ;;*)
-let avl_rebalance(t : int t_avl) : 'a t_avl =
-  let r : int  = avl_root(t) in
-  if r > 2 || r < -2
-  then failwith("avl_relance : too unbalanced")
-  else
-    if r = -1 || r = 0 || r = 1
-    then t
-    else
-      let g : 'a t_avl = bst_subleft(t)
-      and d : 'a t_avl = bst_subright(t)
-      in
-      if r = 2 && avl_root(g) = 1
-      then avl_rd(t)
-      else
-        if r = 2 && avl_root(g) = -1
-        then avl_rgd(t)
-        else
-           if r = -2 && avl_root(d) = -1
-           then avl_rg(t)
-           else avl_rdg(t)
-
-
-let avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
-  let empty : 'a t_bst = bst_empty()
-  in
-  if bst_isempty(tree)
-  then bst_rooting(element, empty, empty)
-  else
-    let root : 'a = bst_root(tree)
-    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
-    in
-    if element < root
-    then avl_rebalance(bst_rooting(root, avl_add(subleft, subright), subright))
-    else if element > root
-    then avl_rebalance(bst_rooting(root, subleft, avl_add(subright, element)))
-    else bst_rooting(root, subleft, subright)
+let rec avl_convert_imbalance(t : 'a t_avl) : int t_avl =
+  if avl_isempty(t)
+  then failwith("Cannot imbalance an empty tree")
+  else 
+    if avl_isempty(avl_subleft(t)) && avl_isempty(avl_subright(t))
+    then avl_rooting(0, avl_empty(), avl_empty())
+    else 
+      if avl_isempty(avl_subleft(t))
+      then avl_rooting(bst_imbalance(t), avl_empty(), avl_convert_imbalance(avl_subright(t)))
+      else  
+        if avl_isempty(avl_subright(t))
+        then avl_rooting(bst_imbalance(t), avl_convert_imbalance(avl_subleft(t)), avl_empty())
+        else avl_rooting(bst_imbalance(t), avl_convert_imbalance(avl_subleft(t)), avl_convert_imbalance(avl_subright(t)))
 ;;
 
-let avl_delete_max(tree : 'a t_avl) : 'a t_avl =
-  if bst_isempty(tree)
+let avl_rebalance(t : int t_avl) : 'a t_avl =
+  let avl_rebalance_aux(t : int t_avl) : 'a t_avl = 
+    let r : int  = avl_root(t) in
+    if r > 2 || r < -2
+    then failwith("avl_relance : too unbalanced")
+    else
+      if r = -1 || r = 0 || r = 1
+      then t
+      else
+        let g : 'a t_avl = avl_subleft(t)
+        and d : 'a t_avl = avl_subright(t)
+        in
+        if r = 2 && avl_root(g) = 1
+        then avl_rd(t)
+        else
+          if r = 2 && avl_root(g) = -1
+          then avl_rgd(t)
+          else
+            if r = -2 && avl_root(d) = -1
+            then avl_rg(t)
+            else avl_rdg(t)
+  in
+  avl_convert_imbalance(avl_rebalance_aux(t)) (* c'est pas beau mais j'ai la flemme *)
+;;
+(*
+let tree : int t_avl = bst_lbuild([1;2;3]);;
+avl_to_string_int(tree);;
+let imbalance_tree : int t_avl = avl_convert_imbalance(tree);;
+avl_to_string_int(imbalance_tree);;
+let rebalance_tree : int t_avl = avl_rebalance(imbalance_tree);;
+avl_to_string_int(rebalance_tree);;*)
+
+
+
+
+let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
+  let empty : 'a t_avl = avl_empty()
+  in
+  if avl_isempty(tree)
+  then avl_rooting(element, empty, empty)
+  else
+    let root : 'a = avl_root(tree)
+    and (subleft, subright) : 'a t_avl * 'a t_avl = (avl_subleft(tree), avl_subright(tree))
+    in
+    if element < root
+    then avl_rebalance(avl_rooting(root, avl_add(subleft, element), subright))
+    else 
+      if element > root
+      then avl_rebalance(avl_rooting(root, subleft, avl_add(subright, element)))
+      else avl_rooting(root, subleft, subright)
+;;
+
+let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
+  if avl_isempty(tree)
   then failwith("avl_delete_max : AVL is empty")
   else
-    let root : 'a = bst_root(tree)
-    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
+    let root : 'a = avl_root(tree)
+    and (subleft, subright) : 'a t_avl * 'a t_avl = (avl_subleft(tree), avl_subright(tree))
     in
-    if bst_isempty(subright)
+    if avl_isempty(subright)
     then subleft
-    else avl_rebalance(bst_rooting(root, subleft, avl_delete_max(subright)))
+    else avl_rebalance(avl_rooting(root, subleft, avl_delete_max(subright)))
 ;;
 
-let avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
-  if bst_isempty(tree)
+(*
+let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
+  if avl_isempty(tree)
   then failwith("avl_delete : AVL is empty")
   else
-    let root : 'a = bst_root(tree)
-    and (subleft, subright) : 'a t_bst * 'a t_bst = (bst_subleft(tree), bst_subright(tree))
+    let root : 'a = avl_root(tree)
+    and (subleft, subright) : 'a t_avl * 'a t_avl = (avl_subleft(tree), avl_subright(tree))
     in
     if element < root
-    then avl_rebalance(bst_rooting(root, avl_delete(subleft, element), subright))
+    then avl_rebalance(avl_rooting(root, avl_delete(subleft, element), subright))
     else if element > root
-    then avl_rebalance(bst_rooting(root, subleft, avl_delete(subright, element)))
-    else if root && not(bst_isemptysubleft) && not(bst_isempty(subright))
-    then avl_rebalance(bst_rooting(max(subleft), avl_delete_max(subleft), subright))
-    else if element = root && not(bst_isempty(subright))
+    then avl_rebalance(avl_rooting(root, subleft, avl_delete(subright, element)))
+    else if root && not(avl_isemptysubleft) && not(avl_isempty(subright)) (* root = ??*)
+    then avl_rebalance(avl_rooting(max(subleft), avl_delete_max(subleft), subright))
+    else if element = root && not(avl_isempty(subright))
     then subright
     else subleft
-;;
+;;*)
 
 
 (* -------------------------------------------------------------------- *)
@@ -156,33 +217,31 @@ let avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
 
 
 let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
-  let empty : 'a t_bst = bst_empty()
+  let empty : 'a t_avl = avl_empty()
   in
-  if (bst_isempty(tree))
-  then bst_rooting(element, empty, empty)
+  if (avl_isempty(tree))
+  then avl_rooting(element, empty, empty)
   else
-    let root : 'a = bst_root(tree) in
+    let root : 'a = avl_root(tree) in
     if (element < root)
     then
       (
-        bst_rooting(root, bst_linsert(bst_subleft(tree), element), bst_subright(tree));
-        avl_rebalance(tree);
+        avl_rebalance(avl_rooting(root, avl_linsert(avl_subleft(tree), element), avl_subright(tree)));
       )
     else
       (
-        bst_rooting(root, bst_subleft(tree), bst_linsert(bst_subright(tree), element));
-        avl_rebalance(tree);
+        avl_rebalance(avl_rooting(root, avl_subleft(tree), avl_linsert(avl_subright(tree), element)));
       )
 ;;
 
 let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
   if (list = [])
   then tree
-  else bst_lbuild_aux(List.tl(list), bst_linsert(tree, List.hd(list)))
+  else avl_lbuild_aux(List.tl(list), avl_linsert(tree, List.hd(list)))
 ;;
 
 let avl_lbuild(list : 'a list) : 'a t_avl =
-  avl_lbuild_aux(list, bst_empty())
+  avl_lbuild_aux(list, avl_empty())
 ;;
 
 let avl_rnd_create_aux(list_length : int) : int list =

@@ -9,7 +9,7 @@ val avl_to_string : string t_avl -> string;;
 val avl_rg : 'a t_avl -> 'a t_avl;;
 
 (* Do a right rotation to the AVL*)
-val avl_rd  'a t_avl -> 'a t_avl;;
+val avl_rd  : 'a t_avl -> 'a t_avl;;
 
 (* Do a right-left rotation to the AVL*)
 val avl_rdg: 'a t_avl -> 'a t_avl ;;
