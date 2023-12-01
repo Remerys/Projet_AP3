@@ -1,31 +1,31 @@
-type 'a btreeS = BT_EMPTY
-               | BT_ROOTING of 'a * 'a btreeS * 'a btreeS
+type 'a t_bt = BT_EMPTY
+               | BT_ROOTING of 'a * 'a t_bt * 'a t_bt
 ;;
 
-let btreeS_empty() = BT_EMPTY;;
+let bt_empty() = BT_EMPTY;;
 
-let btreeS_rooting(x, g, d : 'a * 'a btreeS * 'a btreeS) : 'a btreeS =
+let bt_rooting(x, g, d : 'a * 'a t_bt * 'a t_bt) : 'a t_bt =
   BT_ROOTING(x, g, d);;
 
-let btreeS_isempty(bt_tree : 'a btreeS) : bool =
+let bt_isempty(bt_tree : 'a t_bt) : bool =
   match bt_tree with
   | BT_EMPTY -> true
   | BT_ROOTING(x, g, d) ->false
 ;;
 
-let btreeS_root(bt_tree : 'a btreeS) : 'a =
+let bt_root(bt_tree : 'a t_bt) : 'a =
   match bt_tree with
   | BT_EMPTY -> failwith("root : L'arbre est vide")
   | BT_ROOTING(x, g, d) -> x
 ;;
 
-let btreeS_subleft(bt_tree : 'a btreeS) : 'a btreeS =
+let bt_subleft(bt_tree : 'a t_bt) : 'a t_bt =
   match bt_tree with
   | BT_EMPTY -> BT_EMPTY
   | BT_ROOTING(x, g, d) -> g
 ;;
 
-let btreeS_subright(bt_tree : 'a btreeS) : 'a btreeS =
+let bt_subright(bt_tree : 'a t_bt) : 'a t_bt =
   match bt_tree with
   | BT_EMPTY -> BT_EMPTY
   | BT_ROOTING(x, g, d) -> d
