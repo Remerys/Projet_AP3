@@ -199,17 +199,27 @@ let bst_imbalance(tree : 'a t_bst) : int =
     height(subleft) - height(subright)
 ;;
 
+let bst_average_imbalance_tree(t : 'a t_bst) : float =
+  let rec bst_sum_imbalance_tree(t : 'a t_bst) : int =
+    if bst_isempty(t)
+    then 0
+    else bst_imbalance(t) + bst_sum_imbalance_tree(bst_subleft(t)) + bst_sum_imbalance_tree(bst_subright(t))
+  in
+  float_of_int(bst_sum_imbalance_tree(t))/.float_of_int(height(t))
+;;
+
+
 let bst_average_imbalance_aux() : float =
   let sample : int = 10000
-  and average_imbalance : int ref = ref 0
+  and average_imbalance : float ref = ref 0.
   in
   for i = 1 to sample do
     let tree : 'a t_bst = bst_rnd_create()
     in
-    average_imbalance := !average_imbalance + bst_imbalance(tree)
+    average_imbalance := !average_imbalance +. bst_average_imbalance_tree(tree)
   done;
 
-  let res : float = float_of_int(!average_imbalance)/.float_of_int(sample) in
+  let res : float = !average_imbalance/.float_of_int(sample) in
   res
 ;;
 
@@ -344,7 +354,7 @@ let average(size, l : int * float list) : float =
 ;;
 
 
-(*bst_average_imbalance_subseries(4);;
+bst_average_imbalance_subseries(4);;
 bst_average_imbalance_subseries_random();;
 bst_average_imbalance_subseries_increase();;
-bst_average_imbalance_subseries_decrease();;*)
+bst_average_imbalance_subseries_decrease();;
