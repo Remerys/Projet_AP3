@@ -1,32 +1,32 @@
-#load "btreeS.cmo";;
-#load "useBtree.cmo";;
+(*#load "btreeS.cmo";;
+#load "useBtree.cmo";;*)
 open BtreeS;;
 open UseBtree;;
 
-type 'a t_bst = 'a btreeS;;
+type 'a t_bst = 'a t_bt;;
 
 let bst_isempty(bst : 'a t_bst) : bool =
-  btreeS_isempty(bst)
+  bt_isempty(bst)
 ;;
 
 let bst_empty() : 'a t_bst =
-  btreeS_empty()
+  bt_empty()
 ;;
 
 let bst_root(bst : 'a t_bst) : 'a =
-  btreeS_root(bst)
+  bt_root(bst)
 ;;
 
 let bst_rooting(x, g, d : 'a * 'a t_bst * 'a t_bst) : 'a t_bst =
-  btreeS_rooting(x, g, d)
+  bt_rooting(x, g, d)
 ;;
 
 let bst_subleft(bst : 'a t_bst) : 'a t_bst =
-  btreeS_subleft(bst)
+  bt_subleft(bst)
 ;;
 
 let bst_subright(bst : 'a t_bst) : 'a t_bst =
-  btreeS_subright(bst)
+  bt_subright(bst)
 ;;
 
 let rec bst_linsert(bst, e : 'a t_bst * 'a) : 'a t_bst =
@@ -117,10 +117,10 @@ let rec bst_delete(tree, element : 'a t_bst * 'a) : 'a t_bst =
         if element > r
         then bst_rooting(r, subleft, bst_delete(subright, element))
         else
-          if not(btreeS_isempty(subleft)) && not(btreeS_isempty(subright))
-          then btreeS_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
+          if not(bt_isempty(subleft)) && not(bt_isempty(subright))
+          then bt_rooting(bst_max(subleft), bst_deletemax(subleft), subright)
           else
-            if not(btreeS_isempty(subright))
+            if not(bt_isempty(subright))
             then subright
             else subleft
 ;;
@@ -137,17 +137,17 @@ let rec bst_isBst(bst : 'a t_bst) : bool =
     else
       if bst_isempty(g) (* bst left empty *)
       then
-        if btreeS_min(d) < r
+        if bt_min(d) < r
         then false
         else bst_isBst(d)
       else
         if bst_isempty(d) (* bst right empty *)
         then
-          if btreeS_max(g) > r
+          if bt_max(g) > r
           then false
           else bst_isBst(g)
         else
-          if btreeS_max(g) > r || btreeS_min(d) < r (* 2 subtree *)
+          if bt_max(g) > r || bt_min(d) < r (* 2 subtree *)
           then false
           else bst_isBst(g) && bst_isBst(d)
 ;;
@@ -254,6 +254,15 @@ let bst_imbalance_subseries(sample, sizeSub : int * int) : int =
   bst_imbalance_subseries_aux(sample, sizeSub, 0)
 ;;
 
+let average(size, l : int * float list) : float =
+  let rec average_aux(size, l, average : int * float list * float) : float =
+    if size = 0
+    then average
+    else average_aux(size-1, List.tl(l), List.hd(l) +. average)
+  in
+  average_aux(size, l, 0.)/.float_of_int(size)
+;;
+
 let bst_average_imbalance_subseries(sizeSub : int) : float =
   let sample : int = 10000
   in
@@ -325,14 +334,7 @@ let bst_average_imbalance_subseries_decrease() : float =
 ;;
 
 
-let average(size, l : int * float list) : float =
-  let rec average_aux(size, l, average : int * float list * float) : float =
-    if size = 0
-    then average
-    else average_aux(size-1, List.tl(l), List.hd(l) +. average)
-  in
-  average_aux(size, l, 0.)/.float_of_int(size)
-;;
+
 
 
 (*bst_average_imbalance_subseries(4);;
