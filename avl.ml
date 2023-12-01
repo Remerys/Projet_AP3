@@ -191,7 +191,7 @@ let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
     else avl_rebalance(avl_rooting(root, subleft, avl_delete_max(subright)))
 ;;
 
-(*
+
 let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
   if avl_isempty(tree)
   then failwith("avl_delete : AVL is empty")
@@ -203,12 +203,12 @@ let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
     then avl_rebalance(avl_rooting(root, avl_delete(subleft, element), subright))
     else if element > root
     then avl_rebalance(avl_rooting(root, subleft, avl_delete(subright, element)))
-    else if root && not(avl_isemptysubleft) && not(avl_isempty(subright)) (* root = ??*)
-    then avl_rebalance(avl_rooting(max(subleft), avl_delete_max(subleft), subright))
+    else if element = root && not(avl_isempty(subleft)) && not(avl_isempty(subright))
+    then avl_rebalance(avl_rooting(bst_max(subleft), avl_delete_max(subleft), subright))
     else if element = root && not(avl_isempty(subright))
     then subright
     else subleft
-;;*)
+;;
 
 
 (* -------------------------------------------------------------------- *)
