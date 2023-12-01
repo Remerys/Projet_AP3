@@ -115,6 +115,21 @@ let rec avl_convert_imbalance(t : 'a t_avl) : ('a * int) t_avl =
         else avl_rooting((r, bst_imbalance(t)), avl_convert_imbalance(avl_subleft(t)), avl_convert_imbalance(avl_subright(t)))
 ;;
 
+let rec avl_recalcul_convert_imbalance(t : ('a * int) t_avl) : ('a * int) t_avl =
+  if avl_isempty(t) 
+  then failwith("Cannot imbalance an empty tree")
+  else
+  let (r, imbalance) : 'a * int = avl_root(t) in
+  if avl_isempty(avl_subleft(t)) && avl_isempty(avl_subright(t))
+    then avl_rooting((r, 0), avl_empty(), avl_empty())
+    else 
+      if avl_isempty(avl_subleft(t))
+      then avl_rooting((r, bst_imbalance(t)), avl_empty(), avl_recalcul_convert_imbalance(avl_subright(t)))
+      else  
+        if avl_isempty(avl_subright(t))
+        then avl_rooting((r, bst_imbalance(t)), avl_recalcul_convert_imbalance(avl_subleft(t)), avl_empty())
+        else avl_rooting((r, bst_imbalance(t)), avl_recalcul_convert_imbalance(avl_subleft(t)), avl_recalcul_convert_imbalance(avl_subright(t)))
+      ;;
 (*let tree : int t_avl = bst_lbuild([1;2;3]);;
 avl_to_string_int(tree);;
 let imbalance_tree : (int*int) t_avl = avl_convert_imbalance(tree);;
@@ -141,45 +156,61 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
            then avl_rg(t)
            else avl_rdg(t)
 ;;
-(*
-let tree : int t_avl = bst_lbuild([1;2;3]);;
+
+(*let tree : int t_avl = bst_lbuild([1;2;3]);;
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
-avl_to_string_int(rebalance_tree);;
+avl_to_string_int(rebalance_tree);;*)
 
 let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
-  let (_, imbalance) : 'a * int = avl_root(t) in
-  if imbalance > 2 || imbalance < -2
-  then failwith("avl_relance : too unbalanced")
-  else
-    if imbalance = -1 || imbalance = 0 || imbalance = 1
-    then t
+  let avl_rebalance_aux(t : ('a * int) t_avl) : ('a * int) t_avl =
+    let (_, imbalance) : 'a * int = avl_root(t) in
+    if imbalance > 2 || imbalance < -2
+    then failwith("avl_relance : too unbalanced")
     else
-      let g : ('a * int) t_avl = avl_subleft(t)
-      and d : ('a * int) t_avl = avl_subright(t)
-      in
-      avl_to_string_int_int(g);
-      avl_to_string_int_int(d);
-      let (_, imbalance_g) : 'a * int = avl_root(g) in
-      if imbalance = 2 && imbalance_g = 1
-      then avl_rd(t)
+      if imbalance = -1 || imbalance = 0 || imbalance = 1
+      then t
       else
-        if imbalance = 2 && imbalance_g = -1
-        then avl_rgd(t)
+        let g : ('a * int) t_avl = avl_subleft(t)
+        and d : ('a * int) t_avl = avl_subright(t)
+        in
+        if avl_isempty(g) then 
+          if avl_isempty(d) then t  
+            else 
+              let (_, imbalance_d) : 'a * int = avl_root(d) in
+              if imbalance = -2 && imbalance_d = -1
+                then avl_rg(t)
+                else avl_rdg(t)
         else
-          let (_, imbalance_d) : 'a * int = avl_root(d) in
-          if imbalance = -2 && imbalance_d = -1
-          then avl_rg(t)
-          else avl_rdg(t)
+          if avl_isempty(d) 
+          then
+            let (_, imbalance_d) : 'a * int = avl_root(d) in
+            if imbalance = -2 && imbalance_d = -1
+              then avl_rg(t)
+              else avl_rdg(t)
+          else
+            let (_, imbalance_g) : 'a * int = avl_root(g) in
+            if imbalance = 2 && imbalance_g = 1
+              then avl_rd(t)
+              else 
+                if imbalance = 2 && imbalance_g = -1
+                  then avl_rgd(t)
+                  else
+                  let (_, imbalance_d) : 'a * int = avl_root(d) in
+                  if imbalance = -2 && imbalance_d = -1
+                    then avl_rg(t)
+                    else avl_rdg(t)
+  in 
+  avl_recalcul_convert_imbalance(avl_rebalance_aux(t))
 ;;
 
-
-let tree : int t_avl = bst_lbuild([1;2;3]);;
+(*let tree : int t_avl = bst_lbuild([1;2;3]);;
 avl_to_string_int(tree);;
 let imbalance_tree : (int * int) t_avl = avl_convert_imbalance(tree);;
 avl_to_string_int_int(imbalance_tree);;
+avl_root(imbalance_tree);;
 let rebalance_tree : (int * int) t_avl = avl_rebalance2(imbalance_tree);;
-avl_to_string_int_int(rebalance_tree);;
+avl_to_string_int_int(rebalance_tree);;*)
 
 (*
 let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
@@ -288,4 +319,5 @@ let avl_rnd_create() : int t_avl =
   let random_list : 'a list = avl_rnd_create_aux(random_number)
   in
   avl_lbuild(random_list)
-;;*)
+;;
+*)
