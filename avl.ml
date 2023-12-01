@@ -246,9 +246,9 @@ avl_to_string_int(tree);;
 let imbalance_tree : (int * int) t_avl = avl_convert_imbalance(tree);;
 avl_to_string_int_int(imbalance_tree);;
 let rebalance_tree : (int * int) t_avl = avl_rebalance2(imbalance_tree);;
-avl_to_string_int_int(rebalance_tree);;*)
+avl_to_string_int_int(rebalance_tree);; *)
 
-(*
+
 let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_avl = avl_empty()
   in
@@ -266,9 +266,9 @@ let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
       else avl_rooting(root, subleft, subright)
 ;;
 
-let tree : int t_avl = avl_rebalance(bst_lbuild([3;2;1;4;8;6;7]));;
+(* let tree : int t_avl = avl_rebalance(bst_lbuild([3;2;1;4;8;6;7]));;
 avl_to_string_int(tree);;
-avl_to_string_int(avl_add(tree, 9));;
+avl_to_string_int(avl_add(tree, 9));; *)
 
 let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
   if avl_isempty(tree)
@@ -282,6 +282,23 @@ let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
     else avl_rebalance(avl_rooting(root, subleft, avl_delete_max(subright)))
 ;;
 
+(* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);; *)
+let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+(* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);; *)
+avl_to_string_int(tree);;
+let test_avl_delete_max = avl_delete_max(tree);;
+avl_to_string_int(test_avl_delete_max);;
+(* let test_avl_delete_7 = avl_delete(tree, 7);;
+avl_to_string_int(test_avl_delete_7);;
+let test_avl_delete_2 = avl_delete(tree, 2);;
+avl_to_string_int(test_avl_delete_2);;
+let test_avl_delete_6 = avl_delete(tree, 6);;
+avl_to_string_int(test_avl_delete_6);;
+let test_avl_delete_4 = avl_delete(tree, 4);;
+avl_to_string_int(test_avl_delete_4);; *)
+
+let test_add = avl_add(tree, 9);;
+avl_to_string_int(test_add);;
 
 let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
   if avl_isempty(tree)
