@@ -204,10 +204,10 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
 avl_to_string_int(rebalance_tree);;*)
-let tree : int t_avl = bst_lbuild([4;2;1;3]);;
+(* let tree : int t_avl = bst_lbuild([4;2;1;3]);;
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
-avl_to_string_int(rebalance_tree)
+avl_to_string_int(rebalance_tree) *)
 
 (*
 let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
@@ -283,11 +283,11 @@ let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
 ;;
 
 (* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);; *)
-let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+(* let tree : int t_avl = avl_lbuild([5;4;3;2;1]);; *)
 (* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);; *)
-avl_to_string_int(tree);;
+(* avl_to_string_int(tree);;
 let test_avl_delete_max = avl_delete_max(tree);;
-avl_to_string_int(test_avl_delete_max);;
+avl_to_string_int(test_avl_delete_max);; *)
 (* let test_avl_delete_7 = avl_delete(tree, 7);;
 avl_to_string_int(test_avl_delete_7);;
 let test_avl_delete_2 = avl_delete(tree, 2);;
@@ -297,8 +297,8 @@ avl_to_string_int(test_avl_delete_6);;
 let test_avl_delete_4 = avl_delete(tree, 4);;
 avl_to_string_int(test_avl_delete_4);; *)
 
-let test_add = avl_add(tree, 9);;
-avl_to_string_int(test_add);;
+(* let test_add = avl_add(tree, 9);;
+avl_to_string_int(test_add);; *)
 
 let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
   if avl_isempty(tree)
@@ -351,7 +351,7 @@ let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
 let avl_lbuild(list : 'a list) : 'a t_avl =
   avl_lbuild_aux(list, avl_empty())
 ;;
-*)
+
 let avl_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
