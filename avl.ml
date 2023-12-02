@@ -83,11 +83,18 @@ let avl_rdg(t : 'a t_avl) : 'a t_avl =
     let root : 'a = avl_root(t)
     and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    if avl_isempty(d)
-    then failwith("avl_rdg : subright is empty")
+    if avl_isempty(d) || avl_isempty(avl_subleft(d))
+    then failwith("avl_rdg : subright is empty or subleft of subright empty")
     else
-      let new_d : 'a t_avl = avl_rd(d) in
-      avl_rg(avl_rooting(root, g, new_d))
+      (*
+      let new_g : 'a t_avl = avl_rd(g) in
+      avl_rg(avl_rooting(root, 
+      new_g, 
+      d))*)
+      avl_rooting(avl_root(avl_subleft(d)),
+                  avl_rooting(root, g, avl_subleft(avl_subleft(d))),
+                  avl_rooting(avl_root(d), avl_subright(avl_subleft(d)), avl_subright(d))
+                )
 ;;
 
 let avl_rgd(t : 'a t_avl) : 'a t_avl =
@@ -97,29 +104,34 @@ let avl_rgd(t : 'a t_avl) : 'a t_avl =
     let root : 'a = avl_root(t)
     and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
     in
-    if avl_isempty(g)
-    then failwith("avl_rgd : subleft is empty")
+    if avl_isempty(g) || avl_isempty(avl_subright(g))
+    then failwith("avl_rdg : subleft is empty or subright of subleft empty")
     else
-      let new_g : 'a t_avl = avl_rg(g) in
-      avl_rd(avl_rooting(root, new_g, d))
+      (*
+      let new_d : 'a t_avl = avl_rg(d) in
+      avl_rd(avl_rooting(root, g, new_d))*)
+      avl_rooting(avl_root(avl_subright(g)), 
+                  avl_rooting(avl_root(g), avl_subleft(g), avl_subleft(avl_subright(g))),
+                  avl_rooting(root, avl_subright(avl_subright(g)), d)
+      )
 ;;
 (*
 (* Création d'arbres spécifiques pour chaque type de rotation *)
 
-(* Arbre pour la rotation à droite (avl_rg) *)
-let tree_for_rg = bst_lbuild [4;2;5;1;3];;
-let avl_tree_for_rg = avl_rooting (avl_root tree_for_rg, avl_subleft tree_for_rg, avl_subright tree_for_rg);;
-
-(* Arbre pour la rotation à gauche (avl_rd) *)
-let tree_for_rd = bst_lbuild [2;1;4;3;5];;
+(* Arbre pour la rotation à droite (avl_rd) *)
+let tree_for_rd = bst_lbuild [3;2;1];;
 let avl_tree_for_rd = avl_rooting (avl_root tree_for_rd, avl_subleft tree_for_rd, avl_subright tree_for_rd);;
 
+(* Arbre pour la rotation à gauche (avl_rd) *)
+let tree_for_rg = bst_lbuild [1;2;3];;
+let avl_tree_for_rg = avl_rooting (avl_root tree_for_rg, avl_subleft tree_for_rg, avl_subright tree_for_rg);;
+
 (* Arbre pour la rotation à droite-gauche (avl_rdg) *)
-let tree_for_rdg = bst_lbuild [2;1;6;4;7;3;5];;
+let tree_for_rdg = bst_lbuild [1;3;2];;
 let avl_tree_for_rdg = avl_rooting (avl_root tree_for_rdg, avl_subleft tree_for_rdg, avl_subright tree_for_rdg);;
 
 (* Arbre pour la rotation à gauche-droite (avl_rgd) *)
-let tree_for_rgd = bst_lbuild [6;2;7;1;4;3;5];;
+let tree_for_rgd = bst_lbuild [3;1;2];;
 let avl_tree_for_rgd = avl_rooting (avl_root tree_for_rgd, avl_subleft tree_for_rgd, avl_subright tree_for_rgd);;
 
 (* Affichage des arbres avant et après rééquilibrage *)
@@ -187,29 +199,31 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
     then t
     else
       let imbalance_g : int = bst_imbalance(avl_subleft(t))
-      and imbalance_d : int = bst_imbalance(avl_subright(t))
       in
-      if imbalance = 2 && imbalance_g = 1
+      if imbalance = 2 && imbalance_g = 1 
       then avl_rd(t)
       else
         if imbalance = 2 && imbalance_g = -1
         then avl_rgd(t)
         else
-           if imbalance = -2 && imbalance_d = -1
+          let imbalance_d : int = bst_imbalance(avl_subright(t)) in
+           if imbalance = -2 && imbalance_d = -1 
            then avl_rg(t)
            else avl_rdg(t)
 ;;
-
-(*let tree : int t_avl = bst_lbuild([1;2;3]);;
+(*
+let tree : int t_avl = bst_lbuild([1;2;3]);;
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
 avl_to_string_int(rebalance_tree);;*)
-(* let tree : int t_avl = bst_lbuild([4;2;1;3]);;
+(*let tree : int t_avl = bst_lbuild([4;2;1;3]);;
+avl_to_string_int(tree);;*)
+(*let tree : int t_avl = bst_lbuild([3;2;1;5]);;
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
-avl_to_string_int(rebalance_tree) *)
+avl_to_string_int(rebalance_tree)*)
 
-(*
+
 let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
   let avl_rebalance_aux(t : ('a * int) t_avl) : ('a * int) t_avl =
     let (_, imbalance) : 'a * int = avl_root(t) in
@@ -222,11 +236,13 @@ let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
         let g : ('a * int) t_avl = avl_subleft(t)
         and d : ('a * int) t_avl = avl_subright(t)
         in
-        if not(avl_isempty(g))
-          then let (_,imbalance_g) = avl_root(g)
+        let imbalance_g =
+          if avl_isempty(g) then 0
+          else let (_, imbalance_g) = avl_root(g) in imbalance_g
         in
-        if not(avl_isempty(d))
-          then let (_,imbalance_d) = avl_root(d)
+        let imbalance_d =
+          if avl_isempty(d) then 0
+          else let (_, imbalance_d) = avl_root(d) in imbalance_d
         in
         if imbalance = 2 && imbalance_g = 1
           then avl_rd(t)
@@ -239,14 +255,15 @@ let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
                else avl_rdg(t)
   in 
   avl_recalcul_convert_imbalance(avl_rebalance_aux(t))
-;;*)
-
-(*let tree : int t_avl = bst_lbuild([1;0;2;3;4]);;
+;;
+(*
+let tree : int t_avl = bst_lbuild([1;0;2;3]);;
 avl_to_string_int(tree);;
 let imbalance_tree : (int * int) t_avl = avl_convert_imbalance(tree);;
 avl_to_string_int_int(imbalance_tree);;
 let rebalance_tree : (int * int) t_avl = avl_rebalance2(imbalance_tree);;
 avl_to_string_int_int(rebalance_tree);; *)
+
 
 
 let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
@@ -263,12 +280,14 @@ let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
     else 
       if element > root
       then avl_rebalance(avl_rooting(root, subleft, avl_add(subright, element)))
-      else avl_rooting(root, subleft, subright)
+      else avl_rooting(root, subleft, subright) (*same thing*)
 ;;
 
 (* let tree : int t_avl = avl_rebalance(bst_lbuild([3;2;1;4;8;6;7]));;
 avl_to_string_int(tree);;
 avl_to_string_int(avl_add(tree, 9));; *)
+let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
+avl_to_string_int(tree);;
 
 let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
   if avl_isempty(tree)
@@ -281,6 +300,8 @@ let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
     then subleft
     else avl_rebalance(avl_rooting(root, subleft, avl_delete_max(subright)))
 ;;
+let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
+avl_to_string_int(avl_delete_max(tree));;
 
 (* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);; *)
 (* let tree : int t_avl = avl_lbuild([5;4;3;2;1]);; *)
@@ -317,21 +338,19 @@ let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
     then subright
     else subleft
 ;;
-
-
-(* -------------------------------------------------------------------- *)
-(* A VERIFIER *)
-(* VOIR SI ON PEUT PAS PRENDRE LES FONCTIONS DE BST DIRECTEMENT EN AJOUTANT JUSTE LE AVL_REBALANCE A CHAQUE AJOUT *)
-
+let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
+avl_to_string_int(avl_delete(tree, 1));;
+avl_to_string_int(avl_delete(tree, 3));;
+avl_to_string_int(avl_delete(tree, 0));;
 
 let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_avl = avl_empty()
   in
-  if (avl_isempty(tree))
+  if avl_isempty(tree)
   then avl_rooting(element, empty, empty)
   else
     let root : 'a = avl_root(tree) in
-    if (element < root)
+    if element < root
     then
       (
         avl_rebalance(avl_rooting(root, avl_linsert(avl_subleft(tree), element), avl_subright(tree)));
@@ -352,6 +371,16 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
   avl_lbuild_aux(list, avl_empty())
 ;;
 
+let tree : int t_avl = avl_lbuild([1;0;2;3;4]);;
+avl_to_string_int(tree);;
+
+let tree2 : int t_avl = avl_lbuild([1;2;3;4;5]);;
+avl_to_string_int(tree2);;
+avl_to_string_int(avl_delete_max(tree2));;
+avl_to_string_int(avl_delete(tree2, 1));;
+avl_to_string_int(avl_delete(tree2, 2));;
+avl_to_string_int(avl_delete(tree2, 4));;
+(*
 let avl_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
@@ -373,4 +402,4 @@ let avl_rnd_create() : int t_avl =
   in
   avl_lbuild(random_list)
 ;;
-
+*)
