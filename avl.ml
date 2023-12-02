@@ -340,7 +340,7 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
   avl_lbuild_aux(list, avl_empty())
 ;;
 
-(*
+
 let avl_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
@@ -362,7 +362,6 @@ let avl_rnd_create() : int t_avl =
   in
   avl_lbuild(random_list)
 ;;
-*)
 
 let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   if avl_isempty(tree)
@@ -378,6 +377,16 @@ let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   then avl_seek(subleft, element)
   else avl_seek(subright, element)
 ;;
+
+(* TESTS AVL_RND_CREATE *)
+
+(* TEST 1 *)
+let test_avl_rnd_create1 = avl_rnd_create();;
+avl_to_string_int(test_avl_rnd_create1);;
+
+(* END TESTS AVL_RND_CREATE *)
+
+
 
 (* TESTS SEEK *)
 
