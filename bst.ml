@@ -354,7 +354,96 @@ let average(size, l : int * float list) : float =
 ;;
 
 
-bst_average_imbalance_subseries(4);;
+(*bst_average_imbalance_subseries(4);;
 bst_average_imbalance_subseries_random();;
 bst_average_imbalance_subseries_increase();;
-bst_average_imbalance_subseries_decrease();;
+bst_average_imbalance_subseries_decrease();;*)
+#require "graphics";;
+open Graphics;;
+
+#use "ap2inter.ml";;
+open Unix;;
+#use "complex.ml";;
+open_graph(800,600);;
+(*
+let example () =
+  let step_nb = 5 in
+  let myfunc = bst_average_imbalance_tree in
+  let myind (i : int) : int = i in
+  let myparam = (fun i -> bst_rnd_create()) in
+  let smooth_nb = 3 in
+
+  let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+  match result with
+  | (float_index, time_arr) ->
+    Printf.printf "Index\tTime\n";
+    for i = 0 to step_nb do
+      Printf.printf "%d\t%f\n" (int_of_float float_index.(i)) time_arr.(i);
+    done
+;;*)
+let your_float_space_parameter : t_int_space = {
+  i_minx = 0 ; 
+  i_miny = 0 ; 
+  i_maxx = 800 ; 
+  i_maxy = 600
+};;
+
+let create_rnd_list(size : int) : int list=
+  let l : int list ref = ref [] in
+  for i=0 to size do
+    let r : int = Random.int(200) in
+    l := r::!l
+  done;
+  !l
+;;
+
+let mydraw (ind, tm, wd : float list * float list * t_int_space) : unit =
+  let indmax : int = List.length ind - 1 in
+  let (minind, maxind) : float * float = minmax_float_list ind 
+    and (mintm, maxtm) : float * float = minmax_float_list tm 
+  in
+  let dind : float = 0.1 *. (maxind -. minind) 
+    and dtm : float = 0.1 *. (maxtm -. mintm) 
+  in
+  let ws : t_float_space = {f_minx = minind -. dind ; f_miny = mintm -. dtm ; 
+                   f_maxx = maxind +. 2.0 *. dind ; f_maxy = maxtm +. 2.0 *. dtm}
+  in
+  let prm : t_float_graphic_parameter = init_float_graphic_parameter(ws, wd) in
+  (
+    mymoveto_float (0.0 -. dind, 0.0 -. dtm, prm);
+    draw_string "(0, 0)";
+    mymoveto_float (maxind, 0.0 -. dtm, prm);
+    draw_string (string_of_float (List.nth ind indmax));
+    mymoveto_float (0.0 -. dind, maxtm, prm);
+    draw_string (string_of_float maxtm);
+    
+    (* Dessiner les points de la fonction *)
+    List.iter (fun (x, y) ->
+      mymoveto_float (x, y, prm);
+      draw_string (Printf.sprintf "(%f, %f)" x y)
+    ) (List.combine ind tm);
+  )
+;;
+(*
+(* Exemple d'utilisation *)
+let ind = [|1.0; 2.0; 3.0|] in
+let tm(i : int) = create_rnd_list(i) in
+let wd = your_float_space_parameter in
+mydraw(ind, tm, wd);*)
+
+
+(*
+let example () =
+  let step_nb = 1000 in
+  let myfunc = bst_average_imbalance_tree in
+  let myind (i : int) : int = i in
+  let myparam = (fun i -> bst_lbuild(create_rnd_list(i))) in
+  let smooth_nb = 3 in
+
+  let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+  match result with
+  | (float_index, time_arr) ->
+    mydraw_complexity(float_index, time_arr, your_float_space_parameter);
+  ;;
+
+example();;*)

@@ -4,7 +4,6 @@
 (* mydraw_complexity : trace de courbe *)
 (* ----------------------------------- *)
 
-
 let time_eval(myfunc, myparam : ('a -> 'b) * 'a) : float = 
   let mem_tm : float = Sys.time() in
     (

@@ -208,7 +208,7 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
         then avl_rgd(t)
         else
           let imbalance_d : int = bst_imbalance(avl_subright(t)) in
-           if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
+           if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0) 
            then avl_rg(t)
            else avl_rdg(t)
 ;;
@@ -279,7 +279,7 @@ let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
     else 
       if element > root
       then avl_rebalance(avl_rooting(root, subleft, avl_add(subright, element)))
-      else avl_rooting(root, subleft, subright) (*same thing*)
+      else avl_rooting(root, subleft, subright) 
 ;;
 
 let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
@@ -483,3 +483,41 @@ let test_add10 = avl_add(test_add9, 10);;
 avl_to_string_int(test_add10);; *)
 
 (* END TESTS ADD AND DELETE *)
+
+#require "graphics";;
+open Graphics;;
+
+#use "ap2inter.ml";;
+open Unix;;
+#use "complex.ml";;
+open_graph(800,600);;
+
+let your_float_space_parameter : t_int_space = {
+  i_minx = 0 ; 
+  i_miny = 0 ; 
+  i_maxx = 800 ; 
+  i_maxy = 600
+};;
+let create_rnd_list(size : int) : int list=
+  let l : int list ref = ref [] in
+  for i=0 to size do
+    let r : int = Random.int(200) in
+    l := r::!l
+  done;
+  !l
+;;
+
+let example () =
+  let step_nb = 1000 in
+  let myfunc = avl_delete_max in
+  let myind (i : int) : int = i in
+  let myparam = (fun i -> avl_lbuild(create_rnd_list(i))) in
+  let smooth_nb = 3 in
+
+  let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+  match result with
+  | (float_index, time_arr) ->
+    mydraw_complexity(float_index, time_arr, your_float_space_parameter);
+;;
+
+example();;
