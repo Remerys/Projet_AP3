@@ -76,6 +76,25 @@ let avl_rd(t : 'a t_avl) : 'a t_avl =
     else avl_rooting(avl_root(g), avl_subleft(g), avl_rooting(root, avl_subright(g), d))
 ;;
 
+let avl_rgd(t : 'a t_avl) : 'a t_avl =
+  if avl_isempty(t)
+  then failwith("avl_rgd : avl is empty")
+  else
+    let root : 'a = avl_root(t)
+    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
+    in
+    if avl_isempty(g) || avl_isempty(avl_subright(g))
+    then failwith("avl_rgd : subleft is empty or subright of subleft empty")
+    else
+      (*
+      let new_d : 'a t_avl = avl_rg(d) in
+      avl_rd(avl_rooting(root, g, new_d))*)
+      avl_rooting(avl_root(avl_subright(g)), 
+                  avl_rooting(avl_root(g), avl_subleft(g), avl_subleft(avl_subright(g))),
+                  avl_rooting(root, avl_subright(avl_subright(g)), d)
+      )
+;;
+
 let avl_rdg(t : 'a t_avl) : 'a t_avl =
   if avl_isempty(t)
   then failwith("avl_rdg : avl is empty")
@@ -97,24 +116,6 @@ let avl_rdg(t : 'a t_avl) : 'a t_avl =
                 )
 ;;
 
-let avl_rgd(t : 'a t_avl) : 'a t_avl =
-  if avl_isempty(t)
-  then failwith("avl_rgd : avl is empty")
-  else
-    let root : 'a = avl_root(t)
-    and (g, d) : 'a t_avl * 'a t_avl = (avl_subleft(t), avl_subright(t))
-    in
-    if avl_isempty(g) || avl_isempty(avl_subright(g))
-    then failwith("avl_rdg : subleft is empty or subright of subleft empty")
-    else
-      (*
-      let new_d : 'a t_avl = avl_rg(d) in
-      avl_rd(avl_rooting(root, g, new_d))*)
-      avl_rooting(avl_root(avl_subright(g)), 
-                  avl_rooting(avl_root(g), avl_subleft(g), avl_subleft(avl_subright(g))),
-                  avl_rooting(root, avl_subright(avl_subright(g)), d)
-      )
-;;
 (*
 (* Création d'arbres spécifiques pour chaque type de rotation *)
 
@@ -264,8 +265,6 @@ avl_to_string_int_int(imbalance_tree);;
 let rebalance_tree : (int * int) t_avl = avl_rebalance2(imbalance_tree);;
 avl_to_string_int_int(rebalance_tree);; *)
 
-
-
 let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_avl = avl_empty()
   in
@@ -283,15 +282,9 @@ let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
       else avl_rooting(root, subleft, subright) (*same thing*)
 ;;
 
-(* let tree : int t_avl = avl_rebalance(bst_lbuild([3;2;1;4;8;6;7]));;
-avl_to_string_int(tree);;
-avl_to_string_int(avl_add(tree, 9));; *)
-let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
-avl_to_string_int(tree);;
-
 let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
   if avl_isempty(tree)
-  then failwith("avl_delete_max : AVL is empty")
+  then tree
   else
     let root : 'a = avl_root(tree)
     and (subleft, subright) : 'a t_avl * 'a t_avl = (avl_subleft(tree), avl_subright(tree))
@@ -300,30 +293,10 @@ let rec avl_delete_max(tree : 'a t_avl) : 'a t_avl =
     then subleft
     else avl_rebalance(avl_rooting(root, subleft, avl_delete_max(subright)))
 ;;
-let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
-avl_to_string_int(avl_delete_max(tree));;
-
-(* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);; *)
-(* let tree : int t_avl = avl_lbuild([5;4;3;2;1]);; *)
-(* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);; *)
-(* avl_to_string_int(tree);;
-let test_avl_delete_max = avl_delete_max(tree);;
-avl_to_string_int(test_avl_delete_max);; *)
-(* let test_avl_delete_7 = avl_delete(tree, 7);;
-avl_to_string_int(test_avl_delete_7);;
-let test_avl_delete_2 = avl_delete(tree, 2);;
-avl_to_string_int(test_avl_delete_2);;
-let test_avl_delete_6 = avl_delete(tree, 6);;
-avl_to_string_int(test_avl_delete_6);;
-let test_avl_delete_4 = avl_delete(tree, 4);;
-avl_to_string_int(test_avl_delete_4);; *)
-
-(* let test_add = avl_add(tree, 9);;
-avl_to_string_int(test_add);; *)
 
 let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
   if avl_isempty(tree)
-  then failwith("avl_delete : AVL is empty")
+  then tree
   else
     let root : 'a = avl_root(tree)
     and (subleft, subright) : 'a t_avl * 'a t_avl = (avl_subleft(tree), avl_subright(tree))
@@ -338,10 +311,6 @@ let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
     then subright
     else subleft
 ;;
-let tree : int t_avl = avl_add(avl_add(avl_add(avl_add(avl_add(avl_empty(), 1), 0), 2), 3), 4);;
-avl_to_string_int(avl_delete(tree, 1));;
-avl_to_string_int(avl_delete(tree, 3));;
-avl_to_string_int(avl_delete(tree, 0));;
 
 let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_avl = avl_empty()
@@ -371,15 +340,6 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
   avl_lbuild_aux(list, avl_empty())
 ;;
 
-let tree : int t_avl = avl_lbuild([1;0;2;3;4]);;
-avl_to_string_int(tree);;
-
-let tree2 : int t_avl = avl_lbuild([1;2;3;4;5]);;
-avl_to_string_int(tree2);;
-avl_to_string_int(avl_delete_max(tree2));;
-avl_to_string_int(avl_delete(tree2, 1));;
-avl_to_string_int(avl_delete(tree2, 2));;
-avl_to_string_int(avl_delete(tree2, 4));;
 (*
 let avl_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
@@ -403,3 +363,75 @@ let avl_rnd_create() : int t_avl =
   avl_lbuild(random_list)
 ;;
 *)
+
+
+
+(* TESTS ADD AND DELETE *)
+
+(* TEST 1 *)
+(* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);;
+avl_to_string_int(tree);;
+let test_avl_delete_7 = avl_delete(tree, 7);;
+avl_to_string_int(test_avl_delete_7);;
+let test_avl_delete_6 = avl_delete(tree, 6);;
+avl_to_string_int(test_avl_delete_6);;
+let test_avl_delete_5 = avl_delete(tree, 5);;
+avl_to_string_int(test_avl_delete_5);;
+let test_avl_delete_4 = avl_delete(tree, 4);;
+avl_to_string_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete(tree, 3);;
+avl_to_string_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete(tree, 2);;
+avl_to_string_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete(tree, 1);;
+avl_to_string_int(test_avl_delete_1);; 
+
+let test_avl_delete_max = avl_delete_max(tree);;
+avl_to_string_int(test_avl_delete_max);;
+
+let test_add9 = avl_add(tree, 9);;
+avl_to_string_int(test_add9);;
+let test_add10 = avl_add(test_add9, 10);;
+avl_to_string_int(test_add10);; *)
+
+(* TEST 2 *)
+let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+avl_to_string_int(tree);;
+let test_avl_delete_4 = avl_delete(tree, 4);;
+avl_to_string_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete(tree, 3);;
+avl_to_string_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete(tree, 2);;
+avl_to_string_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete(tree, 1);;
+avl_to_string_int(test_avl_delete_1);;
+
+let test_avl_delete_max = avl_delete_max(tree);;
+avl_to_string_int(test_avl_delete_max);;
+
+let test_add9 = avl_add(tree, 9);;
+avl_to_string_int(test_add9);;
+let test_add10 = avl_add(test_add9, 10);;
+avl_to_string_int(test_add10);;
+
+(* TEST 3 *)
+(* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);;
+avl_to_string_int(tree);;
+let test_avl_delete_4 = avl_delete(tree, 4);;
+avl_to_string_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete(tree, 3);;
+avl_to_string_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete(tree, 2);;
+avl_to_string_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete(tree, 1);;
+avl_to_string_int(test_avl_delete_1);;
+
+let test_avl_delete_max = avl_delete_max(tree);;
+avl_to_string_int(test_avl_delete_max);;
+
+let test_add9 = avl_add(tree, 9);;
+avl_to_string_int(test_add9);;
+let test_add10 = avl_add(test_add9, 10);;
+avl_to_string_int(test_add10);; *)
+
+(* END TESTS ADD AND DELETE *)
