@@ -201,14 +201,14 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
     else
       let imbalance_g : int = bst_imbalance(avl_subleft(t))
       in
-      if imbalance = 2 && imbalance_g = 1 
+      if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
       then avl_rd(t)
       else
         if imbalance = 2 && imbalance_g = -1
         then avl_rgd(t)
         else
           let imbalance_d : int = bst_imbalance(avl_subright(t)) in
-           if imbalance = -2 && imbalance_d = -1 
+           if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
            then avl_rg(t)
            else avl_rdg(t)
 ;;
@@ -245,13 +245,13 @@ let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
           if avl_isempty(d) then 0
           else let (_, imbalance_d) = avl_root(d) in imbalance_d
         in
-        if imbalance = 2 && imbalance_g = 1
+        if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
           then avl_rd(t)
           else
             if imbalance = 2 && imbalance_g = -1
             then avl_rgd(t)
             else
-               if imbalance = -2 && imbalance_d = -1
+               if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
                then avl_rg(t)
                else avl_rdg(t)
   in 
@@ -364,6 +364,54 @@ let avl_rnd_create() : int t_avl =
 ;;
 *)
 
+let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
+  if avl_isempty(tree)
+  then false
+  else
+  let root = avl_root(tree)
+  and subleft = avl_subleft(tree)
+  and subright = avl_subright(tree)
+  in
+  if element = root
+  then true
+  else if element < root
+  then avl_seek(subleft, element)
+  else avl_seek(subright, element)
+;;
+
+(* TESTS SEEK *)
+
+(* TEST 1 *)
+(* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);;
+let test_seek_8 = avl_seek(tree, 8);;
+let test_seek_7 = avl_seek(tree, 7);;
+let test_seek_6 = avl_seek(tree, 6);;
+let test_seek_5 = avl_seek(tree, 5);;
+let test_seek_4 = avl_seek(tree, 4);;
+let test_seek_3 = avl_seek(tree, 3);;
+let test_seek_2 = avl_seek(tree, 2);;
+let test_seek_1 = avl_seek(tree, 1);; *)
+
+(* TEST 2 *)
+(* let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+let test_seek_6 = avl_seek(tree, 6);;
+let test_seek_5 = avl_seek(tree, 5);;
+let test_seek_4 = avl_seek(tree, 4);;
+let test_seek_3 = avl_seek(tree, 3);;
+let test_seek_2 = avl_seek(tree, 2);;
+let test_seek_1 = avl_seek(tree, 1);; *)
+
+(* TEST 3 *)
+(* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);;
+let test_seek_6 = avl_seek(tree, 6);;
+let test_seek_5 = avl_seek(tree, 5);;
+let test_seek_4 = avl_seek(tree, 4);;
+let test_seek_3 = avl_seek(tree, 3);;
+let test_seek_2 = avl_seek(tree, 2);;
+let test_seek_1 = avl_seek(tree, 1);; *)
+
+(* END TESTS SEEK *)
+
 
 
 (* TESTS ADD AND DELETE *)
@@ -395,7 +443,7 @@ let test_add10 = avl_add(test_add9, 10);;
 avl_to_string_int(test_add10);; *)
 
 (* TEST 2 *)
-let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+(* let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
 avl_to_string_int(tree);;
 let test_avl_delete_4 = avl_delete(tree, 4);;
 avl_to_string_int(test_avl_delete_4);;
@@ -412,7 +460,7 @@ avl_to_string_int(test_avl_delete_max);;
 let test_add9 = avl_add(tree, 9);;
 avl_to_string_int(test_add9);;
 let test_add10 = avl_add(test_add9, 10);;
-avl_to_string_int(test_add10);;
+avl_to_string_int(test_add10);; *)
 
 (* TEST 3 *)
 (* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);;
