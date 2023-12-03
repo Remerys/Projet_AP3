@@ -381,8 +381,9 @@ let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
 (* TESTS AVL_RND_CREATE *)
 
 (* TEST 1 *)
+(*
 let test_avl_rnd_create1 = avl_rnd_create();;
-avl_to_string_int(test_avl_rnd_create1);;
+avl_to_string_int(test_avl_rnd_create1);;*)
 
 (* END TESTS AVL_RND_CREATE *)
 
@@ -515,7 +516,7 @@ let create_rnd_list(size : int) : int list=
   done;
   !l
 ;;
-
+(*
 let example () =
   let step_nb = 1000 in
   let myfunc = avl_delete_max in
@@ -529,4 +530,5 @@ let example () =
     mydraw_complexity(float_index, time_arr, your_float_space_parameter);
 ;;
 
-example();;
+(*example();;*)
+*)

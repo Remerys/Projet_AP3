@@ -268,63 +268,18 @@ let rec subseries(size, sizeSub, max : int * int * int) : int list =
 
 let bst_imbalance_subseries(sizeSub : int) : float =
   let sample : int = 1000 in
-  let imbalance : float ref = ref 0.
+  let imbalance : float ref = ref 0. in
   for i=0 to sample do
     let tree : 'a t_bst = bst_lbuild(subseries(10, sizeSub, 200)) in
       imbalance := !imbalance +. bst_average_imbalance_tree(tree)
   done;
-  !imbalance
+  !imbalance/.float_of_int(sample)
 ;;
-
-(*
-let bst_imbalance_subseries(sample, sizeSub : int * int) : float =
-  let rec bst_imbalance_subseries_aux(sample, sizeSub, imbalance : int * int * float ) : float =
-    if sample = 0
-    then imbalance
-    else 
-      (
-        let tree : 'a t_bst = bst_lbuild(subseries(10, sizeSub, 200))
-        in
-        bst_imbalance_subseries_aux(sample-1, sizeSub, imbalance +. bst_average_imbalance_tree(tree))
-      )
-  in
-  bst_imbalance_subseries_aux(sample, sizeSub, 0.)
-;;*)
-
-let average(size, l : int * float list) : float =
-  let rec average_aux(size, l, average : int * float list * float) : float =
-    if size = 0
-    then average
-    else average_aux(size-1, List.tl(l), List.hd(l) +. average)
-  in
-  average_aux(size, l, 0.)/.float_of_int(size)
-;;
-
-(*
-let bst_average_imbalance_subseries(sizeSub : int) : float =
-  let sample : int = 1000
-  in
-  let rec bst_average_imbalance_subseries_aux(size, res : int * float list) : float list=
-    if size = 0
-    then res
-    else 
-      (
-        let imbalance : float = bst_imbalance_subseries(sample, sizeSub)
-        in
-        let average_imbalance : float = imbalance/.float_of_int(sample)
-        in
-        let res_aux : float list = average_imbalance::res
-        in
-        bst_average_imbalance_subseries_aux(size-1, res_aux)
-      )
-  in
-  average(10, bst_average_imbalance_subseries_aux(10, []))
-;;*)
 
 let bst_average_imbalance_subseries(sizeSub : int) : float =
   let imbalance : float ref = ref 0. in 
   for i=0 to 10 do 
-    imbalance := imbalance +. bst_imbalance_subseries(sizeSub)
+    imbalance := (!imbalance) +. bst_imbalance_subseries(sizeSub)
   done;
   !imbalance/.10.
 ;;
@@ -340,8 +295,8 @@ let bst_average_imbalance_subseries_increase() : float =
   let imbalance : float ref = ref 0. in 
   let sizeSub : int ref = ref 1 in
   for i=0 to 10 do 
-    imbalance := imbalance +. bst_imbalance_subseries(sizeSub)
-    sizeSub := !sizeSub + 1;
+    imbalance := (!imbalance) +. bst_imbalance_subseries(!sizeSub);
+    sizeSub := (!sizeSub) + 1
   done;
   !imbalance/.10.
 ;;
@@ -350,60 +305,13 @@ let bst_average_imbalance_subseries_decrease() : float =
   let imbalance : float ref = ref 0. in 
   let sizeSub : int ref = ref 11 in
   for i=0 to 10 do 
-    imbalance := imbalance +. bst_imbalance_subseries(sizeSub)
-    sizeSub := !sizeSub - 1;
+    imbalance := (!imbalance) +. bst_imbalance_subseries(!sizeSub);
+    sizeSub := (!sizeSub) - 1
   done;
   !imbalance/.10.
 ;;
-
 (*
-let bst_average_imbalance_subseries_increase() : float =
-  let sample : int = 10000
-  in
-  let sizeSub : int = 2
-  in
-  let rec bst_average_imbalance_subseries_aux(size, sizeSub, res : int * int * float list) : float list =
-    if size = 0
-    then res
-    else 
-      (
-        let imbalance : float = bst_imbalance_subseries(sample, sizeSub)
-        in
-        let average_imbalance : float = imbalance/.float_of_int(sample)
-        in
-        let res_aux : float list = average_imbalance::res
-        in
-        bst_average_imbalance_subseries_aux(size-1, sizeSub+1, res_aux)
-      )
-  in
-  average(10, bst_average_imbalance_subseries_aux(10, sizeSub, []))
-;;
-
-let bst_average_imbalance_subseries_decrease() : float =
-  let sample : int = 10000
-  in
-  let sizeSub : int = 11
-  in
-  let rec bst_average_imbalance_subseries_aux(size, sizeSub, res : int * int * float list) : float list =
-    if size = 0
-    then res
-    else 
-      (
-        let imbalance : float = bst_imbalance_subseries(sample, sizeSub)
-        in
-        let average_imbalance : float = imbalance/.float_of_int(sample)
-        in
-        let res_aux : float list = average_imbalance::res
-        in
-        bst_average_imbalance_subseries_aux(size-1, sizeSub-1, res_aux)
-      )
-  in
-  average(10, bst_average_imbalance_subseries_aux(10, sizeSub, []))
-;;*)
-
-
-
-(*bst_average_imbalance_subseries(4);;
+bst_average_imbalance_subseries(4);;
 bst_average_imbalance_subseries_random();;
 bst_average_imbalance_subseries_increase();;
 bst_average_imbalance_subseries_decrease();;*)

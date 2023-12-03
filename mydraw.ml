@@ -2,7 +2,11 @@
 #require "unix";;
 #use "ap2inter.ml";;
 #use "complex.ml";;
+#use "btreeS.ml";;
+#use "useBtree.ml";;
 #use "bst.ml";;
+(*#use "avl.ml";;*)
+
 
 let sizeX = 800;;
 let sizeY = 600;;
@@ -94,8 +98,18 @@ let mydraw(ind, tm, wd : float array * float array * t_int_space) : unit =
   )
 ;;
 
+(*
+*
+*            
+*
+*                     Calculs
+*
+*
+*
+*)
+
 let step_nb = 10;;
-let smooth_nb = 2;;
+let smooth_nb = 4;;
 let myind(i : int) = i;;
 
 (*1*)
@@ -142,7 +156,7 @@ let draw_bst_average_imbalance() =
 (*draw_bst_average_imbalance();;*)
 
 (*3*)
-(*
+
 let draw_bst_average_imbalance_subseries () =
   let myfunc = bst_imbalance_subseries in
   let myparam(i : int) : int = 4 in
@@ -162,7 +176,6 @@ let draw_bst_average_imbalance_subseries_random () =
 
 let draw_bst_average_imbalance_subseries_increase () =
   let myfunc = bst_imbalance_subseries in
-  let r : int = Random.int(10) in 
   let myparam(i : int) : int = i+1 in
 
   let (float_index, time_arr) = mycalcul(step_nb, myfunc, myind, myparam, smooth_nb) in
@@ -171,13 +184,13 @@ let draw_bst_average_imbalance_subseries_increase () =
 
 let draw_bst_average_imbalance_subseries_decrease () =
   let myfunc = bst_imbalance_subseries in
-  let r : int = Random.int(10) in 
   let myparam(i : int) : int = step_nb-i+1 in
 
   let (float_index, time_arr) = mycalcul(step_nb, myfunc, myind, myparam, smooth_nb) in
   mydraw(float_index, time_arr, your_float_space_parameter);
 ;;
 
-draw_bst_average_imbalance_subseries();;
-
-*)
+(*draw_bst_average_imbalance_subseries();;*)
+(*draw_bst_average_imbalance_subseries_random();;*)
+(*draw_bst_average_imbalance_subseries_increase();;*)
+(*draw_bst_average_imbalance_subseries_decrease();;*)
