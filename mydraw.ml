@@ -272,7 +272,7 @@ match result with
   mydraw_complexity(float_index, time_arr, your_float_space_parameter);
 ;;
 
-let complexity_AVL_NB_ROTATE() =
+(* let complexity_AVL_NB_ROTATE() =
   let step_nb = 2000 in
   let myfunc = avl_rebalance in
   let myind (i : int) : int = i in
@@ -283,9 +283,9 @@ let complexity_AVL_NB_ROTATE() =
   match result with
   | (float_index, time_arr) ->
     mydraw_complexity(float_index, time_arr, your_float_space_parameter);
-;;
+;; *)
 
-let rec avl_add2(tree, element :'a t_avl * 'a) : 'a t_avl * int =
+(* let rec avl_add2(tree, element :'a t_avl * 'a) : 'a t_avl * int =
   let empty : 'a t_avl = avl_empty()
   in
   let new_t : 'a t_avl ref = ref tree in
@@ -310,16 +310,16 @@ let rec avl_add2(tree, element :'a t_avl * 'a) : 'a t_avl * int =
     if (rebal = !new_t)
     then (rebal, sum)
     else (rebal, sum+1)
-;;
+;; *)
 
-let avl_nb_rotate(l : 'a list) : int =
+(* let avl_nb_rotate(l : 'a list) : int =
   let avl_nb_rotate_aux(l, sum : 'a list * int) : int = 
     if l = []
     then sum
     else avl_nb_rotate_aux(List.tl(l), avl_add2())
-;;
+;; *)
 
-let avl_create_rotate_rnd(size : int) : int =
+(* let avl_create_rotate_rnd(size : int) : int =
   let t : int t_avl ref = ref avl_empty() in 
   let nb_rotate : int ref = ref 0 in
   for i = 0 to size do 
@@ -328,11 +328,11 @@ let avl_create_rotate_rnd(size : int) : int =
     if not(new_t = t)
       then nb_rotate := !nb_rotate + 1
     t := new_t
-  done;
+  done; *)
 
 
 
-complexity_AVL_REBALANCE();;
+(* complexity_AVL_REBALANCE();; *)
 (* complexity_AVL_DELETE_MAX();; *)
 (* complexity_AVL_DELETE();; *)
 (* complexity_AVL_ADD();; *)

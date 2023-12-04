@@ -30,10 +30,10 @@ let avl_subright(avl : 'a t_avl) : 'a t_avl =
   bst_subright(avl)
 ;;
 
-let rec size(avl : 'a t_avl) : int =
+let rec avl_size(avl : 'a t_avl) : int =
   if(avl_isempty(avl))
   then 0
-  else 1 + size(avl_subleft(avl)) + size(avl_subright(avl))
+  else 1 + avl_size(avl_subleft(avl)) + avl_size(avl_subright(avl))
 ;;
 
 let rec avl_to_string(avl : string t_avl) : string =
@@ -348,7 +348,7 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
 
 
 let avl_rnd_create_aux(list_length : int) : int list =
-  let borne : int = power(2, 10) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
+  let borne : int = power(2, 8) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
   let rec aux(n, list) : int list =
     if n = 0
@@ -370,23 +370,23 @@ let avl_rnd_create() : int t_avl =
 ;;
 
 let avl_rnd_create2(list_lenght : int) : int t_avl =
-  let rec aux(tree, list_lenght : int t_avl * int) : int t_avl =
+  let rec avl_rnd_create2_aux(tree, list_lenght : int t_avl * int) : int t_avl =
     if list_lenght = 0
     then tree 
     else
-    let random_list : 'a list = avl_rnd_create_aux(list_lenght)
-    in
-    let tree = avl_lbuild_aux(random_list, tree)
-    in
-    if size(tree) = list_lenght
-    then tree
-    else aux(tree, list_lenght - size(tree))
-  in aux(avl_empty(), list_lenght)
+      let random_list : 'a list = avl_rnd_create_aux(list_lenght) 
+      and size_t : int = avl_size(tree)
+      in
+      let tree = avl_lbuild_aux(random_list, tree)
+      in
+      avl_rnd_create2_aux(tree, list_lenght - (avl_size(tree) - size_t))
+  in
+  avl_rnd_create2_aux(avl_empty(), list_lenght)
 ;;
 
-let test_rnd_create2 = avl_rnd_create2(50);;
+let test_rnd_create2 = avl_rnd_create2(255);;
 avl_to_string_int(test_rnd_create2);;
-size(test_rnd_create2);;
+avl_size(test_rnd_create2);;
 
 let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   if avl_isempty(tree)
