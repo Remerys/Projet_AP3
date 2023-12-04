@@ -381,8 +381,8 @@ let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
 (* TESTS AVL_RND_CREATE *)
 
 (* TEST 1 *)
-let test_avl_rnd_create1 = avl_rnd_create();;
-avl_to_string_int(test_avl_rnd_create1);;
+(* let test_avl_rnd_create1 = avl_rnd_create();;
+avl_to_string_int(test_avl_rnd_create1);; *)
 
 (* END TESTS AVL_RND_CREATE *)
 
@@ -493,6 +493,8 @@ avl_to_string_int(test_add10);; *)
 
 (* END TESTS ADD AND DELETE *)
 
+
+(* TESTS COMPLEXITY OF AVL_SEEK | AVL_ADD | AVL_DELETE | AVL_DELETE_MAX*)
 #require "graphics";;
 open Graphics;;
 
@@ -516,12 +518,12 @@ let create_rnd_list(size : int) : int list=
   !l
 ;;
 
-let example () =
+let complexity_AVL_DELETE_MAX() =
   let step_nb = 1000 in
   let myfunc = avl_delete_max in
   let myind (i : int) : int = i in
   let myparam = (fun i -> avl_lbuild(create_rnd_list(i))) in
-  let smooth_nb = 3 in
+  let smooth_nb = 300 in
 
   let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
   match result with
@@ -529,4 +531,46 @@ let example () =
     mydraw_complexity(float_index, time_arr, your_float_space_parameter);
 ;;
 
-example();;
+let complexity_AVL_DELETE() =
+  let step_nb = 1000 in
+  let myfunc = avl_delete in
+  let myind (i : int) : int = i in
+  let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+  let smooth_nb = 300 in
+
+  let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+  match result with
+  | (float_index, time_arr) ->
+    mydraw_complexity(float_index, time_arr, your_float_space_parameter);
+;;
+
+let complexity_AVL_ADD() =
+let step_nb = 1000 in
+let myfunc = avl_add in
+let myind (i : int) : int = i in
+let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+let smooth_nb = 300 in
+
+let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+match result with
+| (float_index, time_arr) ->
+  mydraw_complexity(float_index, time_arr, your_float_space_parameter);
+;;
+
+let complexity_AVL_SEEK() =
+let step_nb = 1000 in
+let myfunc = avl_seek in
+let myind (i : int) : int = i in
+let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+let smooth_nb = 300 in
+
+let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+match result with
+| (float_index, time_arr) ->
+  mydraw_complexity(float_index, time_arr, your_float_space_parameter);
+;;
+
+(* complexity_AVL_DELETE_MAX();; *)
+(* complexity_AVL_DELETE();; *)
+(* complexity_AVL_ADD();; *)
+(* complexity_AVL_SEEK();; *)
