@@ -30,6 +30,12 @@ let avl_subright(avl : 'a t_avl) : 'a t_avl =
   bst_subright(avl)
 ;;
 
+let rec size(avl : 'a t_avl) : int =
+  if(avl_isempty(avl))
+  then 0
+  else 1 + size(avl_subleft(avl)) + size(avl_subright(avl))
+;;
+
 let rec avl_to_string(avl : string t_avl) : string =
   if avl_isempty(avl)
   then "EMPTY"
@@ -333,7 +339,7 @@ let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
 let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
   if (list = [])
   then tree
-  else avl_lbuild_aux(List.tl(list), avl_linsert(tree, List.hd(list)))
+  else avl_lbuild_aux(List.tl(list), avl_add(tree, List.hd(list)))
 ;;
 
 let avl_lbuild(list : 'a list) : 'a t_avl =
@@ -342,7 +348,7 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
 
 
 let avl_rnd_create_aux(list_length : int) : int list =
-  let borne : int = power(2, 30) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
+  let borne : int = power(2, 10) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
   in
   let rec aux(n, list) : int list =
     if n = 0
@@ -362,6 +368,25 @@ let avl_rnd_create() : int t_avl =
   in
   avl_lbuild(random_list)
 ;;
+
+let avl_rnd_create2(list_lenght : int) : int t_avl =
+  let rec aux(tree, list_lenght : int t_avl * int) : int t_avl =
+    if list_lenght = 0
+    then tree 
+    else
+    let random_list : 'a list = avl_rnd_create_aux(list_lenght)
+    in
+    let tree = avl_lbuild_aux(random_list, tree)
+    in
+    if size(tree) = list_lenght
+    then tree
+    else aux(tree, list_lenght - size(tree))
+  in aux(avl_empty(), list_lenght)
+;;
+
+let test_rnd_create2 = avl_rnd_create2(50);;
+avl_to_string_int(test_rnd_create2);;
+size(test_rnd_create2);;
 
 let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   if avl_isempty(tree)
@@ -495,21 +520,23 @@ avl_to_string_int(test_add10);; *)
 
 
 (* TESTS COMPLEXITY OF AVL_SEEK | AVL_ADD | AVL_DELETE | AVL_DELETE_MAX*)
-#require "graphics";;
+(* #require "graphics";;
 open Graphics;;
 
 #use "ap2inter.ml";;
 open Unix;;
-#use "complex.ml";;
-open_graph(800,600);;
+#use "complex.ml";; *)
+(* open_graph(800,600);; *)
 
-let your_float_space_parameter : t_int_space = {
+(* let your_float_space_parameter : t_int_space = {
   i_minx = 0 ; 
   i_miny = 0 ; 
   i_maxx = 800 ; 
   i_maxy = 600
-};;
-let create_rnd_list(size : int) : int list=
+}
+;; *)
+
+(* let create_rnd_list(size : int) : int list=
   let l : int list ref = ref [] in
   for i=0 to size do
     let r : int = Random.int(200) in
@@ -519,7 +546,7 @@ let create_rnd_list(size : int) : int list=
 ;;
 
 let complexity_AVL_DELETE_MAX() =
-  let step_nb = 1000 in
+  let step_nb = 1500 in
   let myfunc = avl_delete_max in
   let myind (i : int) : int = i in
   let myparam = (fun i -> avl_lbuild(create_rnd_list(i))) in
@@ -545,11 +572,11 @@ let complexity_AVL_DELETE() =
 ;;
 
 let complexity_AVL_ADD() =
-let step_nb = 1000 in
+let step_nb = 200 in
 let myfunc = avl_add in
 let myind (i : int) : int = i in
 let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
-let smooth_nb = 300 in
+let smooth_nb = 15000 in
 
 let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
 match result with
@@ -558,17 +585,17 @@ match result with
 ;;
 
 let complexity_AVL_SEEK() =
-let step_nb = 1000 in
+let step_nb = 200 in
 let myfunc = avl_seek in
 let myind (i : int) : int = i in
 let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
-let smooth_nb = 300 in
+let smooth_nb = 10000 in *)
 
-let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
+(* let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
 match result with
 | (float_index, time_arr) ->
   mydraw_complexity(float_index, time_arr, your_float_space_parameter);
-;;
+;; *)
 
 (* complexity_AVL_DELETE_MAX();; *)
 (* complexity_AVL_DELETE();; *)
