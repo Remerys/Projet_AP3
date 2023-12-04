@@ -55,8 +55,11 @@ val bst_rnd_create : unit -> int t_bst;;
 (* Check the imbalance of a binary search tree *)
 val bst_imbalance : 'a t_bst -> int;;
 
-(* Calculate the average imbalance of a binary search tree *)
+(* Calculate the average imbalance of a created binary search tree *)
 val bst_average_imbalance : unit -> float list;;
+
+(* Calculate the average imbalance of binary search tree *)
+val bst_average_imbalance_tree : 'a t_bst -> float;;
 
 (* Create an list of a subserie*)
 val subserie : int * int -> int list;;
@@ -65,7 +68,7 @@ val subserie : int * int -> int list;;
 val subseries : int * int * int -> int list;;
 
 (* Calculate the imbalance of a binary search tree with subseries*)
-val bst_imbalance_subseries : int * int -> int;;
+val bst_imbalance_subseries : int -> float;;
 
 (* Calculate the average of imbulance of binary search trees with subseries with fixed size*)
 val bst_average_imbalance_subseries : int -> float;;
@@ -78,7 +81,4 @@ val bst_average_imbalance_subseries_increase : unit -> float;;
 
 (* Calculate the average of imbulance of binary search trees with subseries with decreasing size*)
 val bst_average_imbalance_subseries_decrease : unit -> float;;
-
-(* Calculate the average of a list of float *)
-val average : int * float list -> float;;
 
