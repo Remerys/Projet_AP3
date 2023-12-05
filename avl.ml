@@ -16,6 +16,10 @@ let get_counter() : int =
   !counter
 ;;
 
+let reset_counter() : unit =
+  counter := 0
+;;
+
 let avl_isempty(avl : 'a t_avl) : bool =
   bst_isempty(avl)
 ;;
@@ -59,6 +63,8 @@ let rec avl_to_string_int(avl : int t_avl) : string =
   else
   "(" ^ string_of_int(avl_root(avl)) ^ "," ^ avl_to_string_int(avl_subleft(avl)) ^ "," ^ avl_to_string_int(avl_subright(avl)) ^ ")"
 ;;
+
+(* 1.1 *)
 
 let avl_rg(t : 'a t_avl) : 'a t_avl =
   if avl_isempty(t)
@@ -116,6 +122,8 @@ let avl_rdg(t : 'a t_avl) : 'a t_avl =
                 )
 ;;
 
+(* 1.2 *)
+
 let avl_rebalance(t : 'a t_avl) : 'a t_avl =
   let imbalance : int = bst_imbalance(t) in
   if imbalance > 2 || imbalance < -2
@@ -130,14 +138,14 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
       then
       (
         increment_counter();
-        avl_rd(t);
+        avl_rd(t)
       )
       else
         if imbalance = 2 && imbalance_g = -1
         then
         (
           increment_counter();
-          avl_rgd(t);
+          avl_rgd(t)
         )
         else
           let imbalance_d : int = bst_imbalance(avl_subright(t)) in
@@ -145,16 +153,16 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
           then
           (
             increment_counter();
-            avl_rg(t);
+            avl_rg(t)
           )
           else 
           (
             increment_counter();
-            avl_rdg(t);
+            avl_rdg(t)
           )
 ;;
 
-
+(* 1.3 *)
 
 let rec avl_add(tree, element :'a t_avl * 'a) : 'a t_avl =
   let empty : 'a t_avl = avl_empty()
@@ -203,22 +211,19 @@ let rec avl_delete(tree, element : 'a t_avl * 'a) : 'a t_avl =
     else subleft
 ;;
 
-let rec avl_linsert(tree, element : 'a t_avl * 'a) : 'a t_avl =
-  let empty : 'a t_avl = avl_empty()
-  in
+let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   if avl_isempty(tree)
-  then avl_rooting(element, empty, empty)
+  then false
   else
-    let root : 'a = avl_root(tree) in
-    if element < root
-    then
-      (
-        avl_rebalance(avl_rooting(root, avl_linsert(avl_subleft(tree), element), avl_subright(tree)));
-      )
-    else
-      (
-        avl_rebalance(avl_rooting(root, avl_subleft(tree), avl_linsert(avl_subright(tree), element)));
-      )
+  let root = avl_root(tree)
+  and subleft = avl_subleft(tree)
+  and subright = avl_subright(tree)
+  in
+  if element = root
+  then true
+  else if element < root
+  then avl_seek(subleft, element)
+  else avl_seek(subright, element)
 ;;
 
 let rec avl_lbuild_aux(list, tree : 'a list * 'a t_avl) : 'a t_avl =
@@ -231,6 +236,7 @@ let avl_lbuild(list : 'a list) : 'a t_avl =
   avl_lbuild_aux(list, avl_empty())
 ;;
 
+(* 2.1 *)
 
 let avl_rnd_create_aux(list_length : int) : int list =
   let borne : int = power(2, 8) - 1 (* -1 sinon le module Random ne prend pas en compte l'argument *)
@@ -261,34 +267,12 @@ let avl_rnd_create2(list_lenght : int) : int t_avl =
     else
       let random_list : 'a list = avl_rnd_create_aux(list_lenght) 
       in
-      let tree = avl_lbuild_aux(random_list, tree)
+      let tree : 'a t_avl = avl_lbuild_aux(random_list, tree)
       in
-      let t_size = avl_size(tree) in
+      let t_size : int = avl_size(tree) in
       avl_rnd_create2_aux(tree, t_size, list_lenght - (t_size - size))
   in
   avl_rnd_create2_aux(avl_empty(), 0, list_lenght)
 ;;
 
-let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
-  if avl_isempty(tree)
-  then false
-  else
-  let root = avl_root(tree)
-  and subleft = avl_subleft(tree)
-  and subright = avl_subright(tree)
-  in
-  if element = root
-  then true
-  else if element < root
-  then avl_seek(subleft, element)
-  else avl_seek(subright, element)
-;;
 
-let create_rnd_list(size : int) : int list=
-  let l : int list ref = ref [] in
-  for i=0 to size do
-    let r : int = Random.int(200) in
-    l := r::!l
-  done;
-  !l
-;;
