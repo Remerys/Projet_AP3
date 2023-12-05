@@ -232,39 +232,89 @@ avl_to_string_int(rebalance_tree)*)
 
 
 let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
-  let avl_rebalance_aux(t : ('a * int) t_avl) : ('a * int) t_avl =
-    let (_, imbalance) : 'a * int = avl_root(t) in
-    if imbalance > 2 || imbalance < -2
-    then failwith("avl_relance : too unbalanced")
+  let (_, imbalance) : 'a * int = avl_root(t) in
+  if imbalance > 2 || imbalance < -2
+  then failwith("avl_relance : too unbalanced")
+  else
+    if imbalance = -1 || imbalance = 0 || imbalance = 1
+    then t
     else
-      if imbalance = -1 || imbalance = 0 || imbalance = 1
-      then t
-      else
-        let g : ('a * int) t_avl = avl_subleft(t)
-        and d : ('a * int) t_avl = avl_subright(t)
-        in
-        let imbalance_g =
-          if avl_isempty(g) then 0
-          else let (_, imbalance_g) = avl_root(g) in imbalance_g
-        in
-        let imbalance_d =
-          if avl_isempty(d) then 0
-          else let (_, imbalance_d) = avl_root(d) in imbalance_d
-        in
-        if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
-          then avl_rd(t)
+      let g : ('a * int) t_avl = avl_subleft(t)
+      and d : ('a * int) t_avl = avl_subright(t)
+      in
+      let imbalance_g =
+        if avl_isempty(g) then 0
+        else let (_, imbalance_g) = avl_root(g) in imbalance_g
+      in
+      let imbalance_d =
+        if avl_isempty(d) then 0
+        else let (_, imbalance_d) = avl_root(d) in imbalance_d
+      in
+      if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
+        then 
+          let new_t = avl_rd(t) in 
+          let new_g = avl_subleft(new_t) in
+          let new_d = avl_subright(new_t) in
+          let (r,imbalance) = avl_root(new_t) in 
+          let (r_g, imbalance_g) = avl_root(new_g) in
+          let (r_d, imbalance_d) = avl_root(new_d) in
+          let new_imbalance = bst_imbalance(new_t) in 
+          let new_imbalance_g = bst_imbalance(new_g) in 
+          let new_imbalance_d = bst_imbalance(new_d) in 
+          avl_rooting((r, new_imbalance), 
+                    avl_rooting((r_g, new_imbalance_g), avl_subleft(new_g), avl_subright(new_g)), 
+                    avl_rooting((r_d, new_imbalance_d), avl_subleft(new_d), avl_subright(new_d)))
+        else
+          if imbalance = 2 && imbalance_g = -1
+          then 
+            let new_t = avl_rgd(t) in 
+            let new_gd = avl_subright(avl_subleft(new_t)) in
+            let new_d = avl_subright(new_t) in
+            let (r,imbalance) = avl_root(new_t) in 
+            let (r_gd, imbalance_gd) = avl_root(new_gd) in
+            let (r_d, imbalance_d) = avl_root(new_d) in
+            let new_imbalance = bst_imbalance(new_t) in 
+            let new_imbalance_gd = bst_imbalance(new_gd) in (*aled*)
+            let new_imbalance_d = bst_imbalance(new_d) in
+            avl_rooting((r, new_imbalance), 
+                          avl_rooting(avl_root(avl_subleft(new_t)), 
+                                avl_subleft(avl_subleft(new_t)), 
+                                avl_rooting((r_gd, new_imbalance_gd), avl_subleft(new_gd), avl_subright(new_gd))),
+                          avl_rooting((r_d, new_imbalance_d), avl_subleft(new_d), avl_subright(new_d))
+                          )
           else
-            if imbalance = 2 && imbalance_g = -1
-            then avl_rgd(t)
-            else
-               if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
-               then avl_rg(t)
-               else avl_rdg(t)
-  in 
-  avl_recalcul_convert_imbalance(avl_rebalance_aux(t))
+              if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
+              then 
+              let new_t = avl_rg(t) in 
+              let new_g = avl_subleft(new_t) in
+              let new_d = avl_subright(new_t) in
+              let (r,imbalance) = avl_root(new_t) in 
+              let (r_g, imbalance_g) = avl_root(new_g) in
+              let (r_d, imbalance_d) = avl_root(new_d) in
+              let new_imbalance = bst_imbalance(new_t) in 
+              let new_imbalance_g = bst_imbalance(new_g) in 
+              let new_imbalance_d = bst_imbalance(new_d) in 
+              avl_rooting((r, new_imbalance), 
+                        avl_rooting((r_g, new_imbalance_g), avl_subleft(new_g), avl_subright(new_g)), 
+                        avl_rooting((r_d, new_imbalance_d), avl_subleft(new_d), avl_subright(new_d)))
+              else 
+              let new_t = avl_rdg(t) in 
+              let new_dg = avl_subleft(avl_subright(new_t)) in
+              let new_g = avl_subleft(new_t) in
+              let (r,imbalance) = avl_root(new_t) in 
+              let (r_dg, imbalance_dg) = avl_root(new_dg) in
+              let (r_g, imbalance_g) = avl_root(new_g) in
+              let new_imbalance = bst_imbalance(new_t) in 
+              let new_imbalance_dg = bst_imbalance(new_dg) in (*aled*)
+              let new_imbalance_g = bst_imbalance(new_g) in 
+              avl_rooting((r, new_imbalance), 
+                            avl_rooting((r_g, new_imbalance_g), avl_subleft(new_g), avl_subright(new_g)), 
+                            avl_rooting(avl_root(avl_subright(new_t)), 
+                                  avl_rooting((r_dg, new_imbalance_dg), avl_subleft(new_dg), avl_subright(new_dg)), 
+                                  avl_subright(avl_subright(new_t))))
 ;;
-(*
-let tree : int t_avl = bst_lbuild([1;0;2;3]);;
+
+(* let tree : int t_avl = bst_lbuild([5;2;8;6;9;7]);;
 avl_to_string_int(tree);;
 let imbalance_tree : (int * int) t_avl = avl_convert_imbalance(tree);;
 avl_to_string_int_int(imbalance_tree);;

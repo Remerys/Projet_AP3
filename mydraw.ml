@@ -5,6 +5,7 @@
 #use "btreeS.ml";;
 #use "useBtree.ml";;
 #use "bst.ml";;
+#use "avl.ml";;
 (*#use "avl.ml";;*)
 
 
@@ -114,7 +115,7 @@ let smooth_nb = 4;;
 let myind(i : int) = i;;
 
 (*1*)
-
+(*
 let draw_height_rnd () =
   let myfunc = height in
   let myparam(i : int) : int t_bst = bst_rnd_create() in
@@ -197,7 +198,7 @@ let draw_bst_average_imbalance_subseries_decrease () =
 (*draw_bst_average_imbalance_subseries_decrease();;*)
 
 (* TESTS COMPLEXITY OF AVL_SEEK | AVL_ADD | AVL_DELETE | AVL_DELETE_MAX*)
-
+*)
 let create_rnd_list(size : int) : int list=
   let l : int list ref = ref [] in
   for i=0 to size do
@@ -209,10 +210,10 @@ let create_rnd_list(size : int) : int list=
 
 let complexity_AVL_REBALANCE() =
   let step_nb = 500 in
-  let myfunc = avl_rebalance in
+  let myfunc = avl_rebalance2 in
   let myind (i : int) : int = i in
-  let myparam = (fun i -> avl_lbuild(create_rnd_list(i))) in
-  let smooth_nb = 1000 in
+  let myparam = (fun i -> avl_convert_imbalance(avl_lbuild(create_rnd_list(i)))) in
+  let smooth_nb = 100 in
 
   let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
   match result with
@@ -332,7 +333,7 @@ match result with
 
 
 
-(* complexity_AVL_REBALANCE();; *)
+complexity_AVL_REBALANCE();; 
 (* complexity_AVL_DELETE_MAX();; *)
 (* complexity_AVL_DELETE();; *)
 (* complexity_AVL_ADD();; *)
