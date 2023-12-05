@@ -1,5 +1,5 @@
 (* Binary Search Tree *)
-type 'a t_bst;;
+type 'a t_bst = 'a BtreeS.t_bt;;
 
 (* Check if the binary search tree is empty *)
 val bst_isempty : 'a t_bst -> bool;;
@@ -51,9 +51,10 @@ val bst_isBst : 'a t_bst -> bool;;
 (* Calculate the power of a number *)
 val power : int * int -> int;;
 
-(* Create a binary search tree based on a given size *)
+(* Create a binary search tree *)
 val bst_rnd_create : unit -> int t_bst;;
 
+(* Create a binary search tree based on a given size*)
 val bst_create_rnd_tree  : int -> int t_bst;;
 
 (* Check the imbalance of a binary search tree *)
@@ -62,6 +63,7 @@ val bst_imbalance : 'a t_bst -> int;;
 (* Calculate the average imbalance of a created binary search tree *)
 val bst_average_imbalance : unit -> float list;;
 
+(* Calculate the average imbalance of a created binary search tree *)
 val bst_average_imbalance_aux : unit -> float;;
 
 (* Calculate the average imbalance of binary search tree *)

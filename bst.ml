@@ -288,7 +288,6 @@ let bst_average_imbalance_subseries(sizeSub : int) : float =
   !imbalance/.10.
 ;;
 
-
 let bst_average_imbalance_subseries_random() : float =
   let sizeSub : int = Random.int(10)
   in
@@ -314,6 +313,7 @@ let bst_average_imbalance_subseries_decrease() : float =
   done;
   !imbalance/.10.
 ;;
+
 (*
 bst_average_imbalance_subseries(4);;
 bst_average_imbalance_subseries_random();;
