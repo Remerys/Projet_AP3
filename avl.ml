@@ -434,9 +434,9 @@ let avl_rnd_create2(list_lenght : int) : int t_avl =
   avl_rnd_create2_aux(avl_empty(), list_lenght)
 ;;
 
-let test_rnd_create2 = avl_rnd_create2(255);;
+(* let test_rnd_create2 = avl_rnd_create2(50);;
 avl_to_string_int(test_rnd_create2);;
-avl_size(test_rnd_create2);;
+avl_size(test_rnd_create2);; *)
 
 let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
   if avl_isempty(tree)
@@ -569,3 +569,160 @@ avl_to_string_int(test_add10);; *)
 (* END TESTS ADD AND DELETE *)
 
 
+let avl_rebalance2(t : ('a * int) t_avl) : ('a * int) t_avl =
+  let avl_rebalance_aux(t : ('a * int) t_avl) : ('a * int) t_avl =
+    let (_, imbalance) : 'a * int = avl_root(t) in
+    if imbalance > 2 || imbalance < -2
+    then failwith("avl_relance : too unbalanced")
+    else
+      if imbalance = -1 || imbalance = 0 || imbalance = 1
+      then t
+      else
+        let g : ('a * int) t_avl = avl_subleft(t)
+        and d : ('a * int) t_avl = avl_subright(t)
+        in
+        let imbalance_g =
+          if avl_isempty(g) then 0
+          else let (_, imbalance_g) = avl_root(g) in imbalance_g
+        in
+        let imbalance_d =
+          if avl_isempty(d) then 0
+          else let (_, imbalance_d) = avl_root(d) in imbalance_d
+        in
+        if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
+          then avl_rd(t)
+          else
+            if imbalance = 2 && imbalance_g = -1
+            then avl_rgd(t)
+            else
+               if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0)
+               then avl_rg(t)
+               else avl_rdg(t)
+  in 
+  avl_recalcul_convert_imbalance(avl_rebalance_aux(t))
+;;
+
+let rec avl_add2(tree, element : ('a * int) t_avl * 'a) : ('a * int) t_avl =
+  let empty : ('a * int) t_avl = avl_empty()
+  in
+  if avl_isempty(tree)
+  then avl_rooting((element,0), empty, empty)
+  else
+    let (root, imbalance) : 'a * int = (avl_root(tree))
+    and (subleft, subright) : ('a * int) t_avl * ('a * int) t_avl = (avl_subleft(tree), avl_subright(tree))
+    in
+    if element < root
+    then avl_rebalance2(avl_rooting((root, imbalance), avl_add2(subleft, element), subright))
+    else
+      if element > root
+      then avl_rebalance2(avl_rooting((root, imbalance), subleft, avl_add2(subright, element)))
+      else avl_rooting((root, imbalance), subleft, subright) 
+;;
+
+let rec avl_delete_max2(tree : ('a * int) t_avl) : ('a * int) t_avl =
+  if avl_isempty(tree)
+  then tree
+  else
+    let (root, imbalance) : 'a * int = (avl_root(tree))
+    and (subleft, subright) : ('a * int) t_avl * ('a * int) t_avl = (avl_subleft(tree), avl_subright(tree))
+    in
+    if avl_isempty(subright)
+    then subleft
+    else avl_rebalance2(avl_rooting((root, imbalance), subleft, avl_delete_max2(subright)))
+;;
+
+let rec avl_delete2(tree, element : ('a * int) t_avl * 'a) : ('a * int) t_avl =
+  if avl_isempty(tree)
+  then tree
+  else
+    let (root,imbalance) : 'a * int = avl_root(tree)
+    and (subleft, subright) : ('a * int) t_avl * ('a * int) t_avl = (avl_subleft(tree), avl_subright(tree))
+    in
+    if element < root
+    then avl_rebalance2(avl_rooting((root, imbalance), avl_delete2(subleft, element), subright))
+    else if element > root
+    then avl_rebalance2(avl_rooting((root, imbalance), subleft, avl_delete2(subright, element)))
+    else if element = root && not(avl_isempty(subleft)) && not(avl_isempty(subright))
+    then avl_rebalance2(avl_rooting(bst_max(subleft), avl_delete_max2(subleft), subright))
+    else if element = root && not(avl_isempty(subright))
+    then subright
+    else subleft
+;;
+
+
+
+(* TESTS ADD AND DELETE *)
+
+(* TEST 1 *)
+(* let tree : int t_avl = avl_lbuild([3;2;1;4;8;6;7]);;
+avl_to_string_int(tree);;
+let new_tree = avl_convert_imbalance(tree);;
+avl_to_string_int_int(new_tree);;
+let test_avl_delete_7 = avl_delete2(new_tree, 7);;
+avl_to_string_int_int(test_avl_delete_7);;
+let test_avl_delete_6 = avl_delete2(new_tree, 6);;
+avl_to_string_int_int(test_avl_delete_6);;
+let test_avl_delete_5 = avl_delete2(new_tree, 5);;
+avl_to_string_int_int(test_avl_delete_5);;
+let test_avl_delete_4 = avl_delete2(new_tree, 4);;
+avl_to_string_int_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete2(new_tree, 3);;
+avl_to_string_int_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete2(new_tree, 2);;
+avl_to_string_int_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete2(new_tree, 1);;
+avl_to_string_int_int(test_avl_delete_1);; 
+
+let test_avl_delete_max = avl_delete_max2(new_tree);;
+avl_to_string_int_int(test_avl_delete_max);;
+
+let test_add9 = avl_add2(new_tree, 9);;
+avl_to_string_int_int(test_add9);;
+let test_add10 = avl_add2(test_add9, 10);;
+avl_to_string_int_int(test_add10);; *)
+
+(* TEST 2 *)
+let tree : int t_avl = avl_lbuild([5;4;3;2;1]);;
+avl_to_string_int(tree);;
+let new_tree = avl_convert_imbalance(tree);;
+avl_to_string_int_int(new_tree);;
+let test_avl_delete_4 = avl_delete2(new_tree, 4);;
+avl_to_string_int_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete2(new_tree, 3);;
+avl_to_string_int_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete2(new_tree, 2);;
+avl_to_string_int_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete2(new_tree, 1);;
+avl_to_string_int_int(test_avl_delete_1);;
+
+let test_avl_delete_max = avl_delete_max2(new_tree);;
+avl_to_string_int_int(test_avl_delete_max);;
+
+let test_add9 = avl_add2(new_tree, 9);;
+avl_to_string_int_int(test_add9);;
+let test_add10 = avl_add2(test_add9, 10);;
+avl_to_string_int_int(test_add10);;
+
+(* TEST 3 *)
+(* let tree : int t_avl = avl_lbuild([1;2;3;4;5]);;
+avl_to_string_int(tree);;
+let new_tree = avl_convert_imbalance(tree);;
+avl_to_string_int_int(new_tree);;
+let test_avl_delete_4 = avl_delete2(new_tree, 4);;
+avl_to_string_int_int(test_avl_delete_4);;
+let test_avl_delete_3 = avl_delete2(new_tree, 3);;
+avl_to_string_int_int(test_avl_delete_3);;
+let test_avl_delete_2 = avl_delete2(new_tree, 2);;
+avl_to_string_int_int(test_avl_delete_2);;
+let test_avl_delete_1 = avl_delete2(new_tree, 1);;
+avl_to_string_int_int(test_avl_delete_1);;
+
+let test_avl_delete_max = avl_delete_max2(new_tree);;
+avl_to_string_int_int(test_avl_delete_max);;
+
+let test_add9 = avl_add2(new_tree, 9);;
+avl_to_string_int_int(test_add9);;
+let test_add10 = avl_add2(test_add9, 10);;
+avl_to_string_int_int(test_add10);; *)
+
+(* END TESTS ADD AND DELETE *)
