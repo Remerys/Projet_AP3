@@ -2,10 +2,14 @@
 #require "unix";;
 #use "ap2inter.ml";;
 #use "complex.ml";;
-#use "btreeS.ml";;
-#use "useBtree.ml";;
-#use "bst.ml";;
-#use "avl.ml";;
+#load "btreeS.cmo";;
+#load "useBtree.cmo";;
+#load "bst.cmo";;
+
+open BtreeS;;
+open UseBtree;;
+open Bst;;
+(* #use "avl.ml";; *)
 (*#use "avl.ml";;*)
 
 
@@ -13,6 +17,7 @@ let sizeX = 800;;
 let sizeY = 600;;
 
 open_graph(sizeX,sizeY);;
+clear_graph();;
 
 let your_float_space_parameter : t_int_space = {
   i_minx = 0 ; 
@@ -97,6 +102,9 @@ let mydraw(ind, tm, wd : float array * float array * t_int_space) : unit =
     mymoveto_float(0.0 -. dind, maxtm, prm) ; draw_string(string_of_float(maxtm)) ;
     mydraw_polyline_xy_float(ind, tm, prm);
     mymoveto_float(maxind, maxtm, prm); draw_string(string_of_float tm.(indmax));
+
+    mymoveto_float ((minind -. dind), 0.0, prm);
+    mylineto_float((maxind +. 2.0 *. dind), 0.0, prm);
   )
 ;;
 
@@ -111,13 +119,13 @@ let mydraw(ind, tm, wd : float array * float array * t_int_space) : unit =
 *)
 
 let step_nb = 10;;
-let smooth_nb = 4;;
+let smooth_nb = 3;;
 let myind(i : int) = i;;
 
 (*1*)
-(*
+
 let draw_height_rnd () =
-  let myfunc = height in
+  let myfunc = bst_height in
   let myparam(i : int) : int t_bst = bst_rnd_create() in
 
   let (float_index, time_arr) = mycalcul_int(step_nb, myfunc, myind, myparam, smooth_nb) in
@@ -125,15 +133,15 @@ let draw_height_rnd () =
 ;;
 
 let draw_height_increase_rnd() = 
-  let myfunc = height in
+  let myfunc = bst_height in
   let myparam(i : int) : int t_bst = bst_create_rnd_tree(i) in
 
   let (float_index, time_arr) = mycalcul_int(step_nb, myfunc, myind, myparam, smooth_nb) in
   mydraw(float_index, time_arr, your_float_space_parameter);
 ;;
 
-(*draw_height_rnd();;*)
-(*draw_height_increase_rnd();;*)
+(* draw_height_rnd();; *)
+(* draw_height_increase_rnd();; *)
 
 (*2*)
 
@@ -154,8 +162,8 @@ let draw_bst_average_imbalance() =
 ;;
 
 
-(*draw_bst_average_imbalance_tree();;*)
-(*draw_bst_average_imbalance();;*)
+(* draw_bst_average_imbalance_tree();; *)
+(* draw_bst_average_imbalance();; *)
 
 (*3*)
 
@@ -192,13 +200,13 @@ let draw_bst_average_imbalance_subseries_decrease () =
   mydraw(float_index, time_arr, your_float_space_parameter);
 ;;
 
-(*draw_bst_average_imbalance_subseries();;*)
-(*draw_bst_average_imbalance_subseries_random();;*)
-(*draw_bst_average_imbalance_subseries_increase();;*)
-(*draw_bst_average_imbalance_subseries_decrease();;*)
+(* draw_bst_average_imbalance_subseries();; *)
+(* draw_bst_average_imbalance_subseries_random();; *)
+(* draw_bst_average_imbalance_subseries_increase();; *)
+(* draw_bst_average_imbalance_subseries_decrease();; *)
 
 (* TESTS COMPLEXITY OF AVL_SEEK | AVL_ADD | AVL_DELETE | AVL_DELETE_MAX*)
-*)
+
 let create_rnd_list(size : int) : int list=
   let l : int list ref = ref [] in
   for i=0 to size do
@@ -208,7 +216,7 @@ let create_rnd_list(size : int) : int list=
   !l
 ;;
 
-let complexity_AVL_REBALANCE() =
+(* let complexity_AVL_REBALANCE() =
   let step_nb = 500 in
   let myfunc = avl_rebalance2 in
   let myind (i : int) : int = i in
@@ -219,13 +227,13 @@ let complexity_AVL_REBALANCE() =
   match result with
   | (float_index, time_arr) ->
     mydraw_complexity(float_index, time_arr, your_float_space_parameter);
-;;
+;; *)
 
-let complexity_AVL_DELETE_MAX() =
+(* let complexity_AVL_DELETE_MAX() =
   let step_nb = 50 in
-  let myfunc = avl_delete_max in
+  let myfunc = avl_delete_max2 in
   let myind (i : int) : int = i in
-  let myparam = (fun i -> avl_lbuild(create_rnd_list(i))) in
+  let myparam = (fun i -> avl_convert_imbalance(avl_lbuild(create_rnd_list(i)))) in
   let smooth_nb = 1000 in
 
   let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
@@ -236,9 +244,9 @@ let complexity_AVL_DELETE_MAX() =
 
 let complexity_AVL_DELETE() =
   let step_nb = 50 in
-  let myfunc = avl_delete in
+  let myfunc = avl_delete2 in
   let myind (i : int) : int = i in
-  let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+  let myparam = (fun i -> (avl_convert_imbalance(avl_lbuild(create_rnd_list(i)))), i) in
   let smooth_nb = 1000 in
 
   let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
@@ -249,9 +257,9 @@ let complexity_AVL_DELETE() =
 
 let complexity_AVL_ADD() =
 let step_nb = 50 in
-let myfunc = avl_add in
+let myfunc = avl_add2 in
 let myind (i : int) : int = i in
-let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+let myparam = (fun i -> (avl_convert_imbalance(avl_lbuild(create_rnd_list(i)))), i) in
 let smooth_nb = 1000 in
 
 let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
@@ -264,14 +272,14 @@ let complexity_AVL_SEEK() =
 let step_nb = 50 in
 let myfunc = avl_seek in
 let myind (i : int) : int = i in
-let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), 50) in
+let myparam = (fun i -> avl_lbuild(create_rnd_list(i)), i) in
 let smooth_nb = 1000 in
 
 let result = mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb) in
 match result with
 | (float_index, time_arr) ->
   mydraw_complexity(float_index, time_arr, your_float_space_parameter);
-;;
+;; *)
 
 (* let complexity_AVL_NB_ROTATE() =
   let step_nb = 2000 in
@@ -286,7 +294,7 @@ match result with
     mydraw_complexity(float_index, time_arr, your_float_space_parameter);
 ;; *)
 
-(* let rec avl_add2(tree, element :'a t_avl * 'a) : 'a t_avl * int =
+(* let rec avl_add3(tree, element :'a t_avl * 'a) : 'a t_avl * int =
   let empty : 'a t_avl = avl_empty()
   in
   let new_t : 'a t_avl ref = ref tree in
@@ -298,26 +306,28 @@ match result with
     in
     if element < root
     then 
-      (
-        let t, sum = avl_add2(subleft, element) in
-        new_t := avl_rooting(root, t, subright)
-      )
+        let t, sum = avl_add3(subleft, element) in
+        (avl_rooting(root, t, subright), sum+1)
     else 
       if element > root
-      then new_t := avl_rooting(root, subleft, avl_add(subright, element))
-      else new_t := avl_rooting(root, subleft, subright) 
+      then 
+        let t, sum = avl_add3(subright, element) in
+        (avl_rooting(root, subleft, t), sum+1)
+      else 
+        let t, sum = avl_add3(subright, element) in
+        (avl_rooting(root, subleft, subright), sum)
     in
-    let rebal : 'a t_avl = avl_rebalance(!new_t) in 
+    (* let rebal : 'a t_avl = avl_rebalance(!new_t) in 
     if (rebal = !new_t)
     then (rebal, sum)
-    else (rebal, sum+1)
+    else (rebal, sum+1) *)
 ;; *)
 
 (* let avl_nb_rotate(l : 'a list) : int =
   let avl_nb_rotate_aux(l, sum : 'a list * int) : int = 
     if l = []
     then sum
-    else avl_nb_rotate_aux(List.tl(l), avl_add2())
+    else avl_nb_rotate_aux(List.tl(l), avl_add3())
 ;; *)
 
 (* let avl_create_rotate_rnd(size : int) : int =
@@ -333,7 +343,7 @@ match result with
 
 
 
-complexity_AVL_REBALANCE();; 
+(* complexity_AVL_REBALANCE();;  *)
 (* complexity_AVL_DELETE_MAX();; *)
 (* complexity_AVL_DELETE();; *)
 (* complexity_AVL_ADD();; *)

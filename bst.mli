@@ -19,6 +19,8 @@ val bst_subleft : 'a t_bst -> 'a t_bst;;
 (* Returns the subright tree of the binary search tree *)
 val bst_subright : 'a t_bst -> 'a t_bst;;
 
+val bst_height : 'a t_bst -> int;;
+
 (* Add an element to the leaf *)
 val bst_linsert : 'a t_bst * 'a -> 'a t_bst;;
 
@@ -52,11 +54,15 @@ val power : int * int -> int;;
 (* Create a binary search tree based on a given size *)
 val bst_rnd_create : unit -> int t_bst;;
 
+val bst_create_rnd_tree  : int -> int t_bst;;
+
 (* Check the imbalance of a binary search tree *)
 val bst_imbalance : 'a t_bst -> int;;
 
 (* Calculate the average imbalance of a created binary search tree *)
 val bst_average_imbalance : unit -> float list;;
+
+val bst_average_imbalance_aux : unit -> float;;
 
 (* Calculate the average imbalance of binary search tree *)
 val bst_average_imbalance_tree : 'a t_bst -> float;;

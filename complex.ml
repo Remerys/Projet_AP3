@@ -36,13 +36,13 @@ let mycomplexity(step_nb, myfunc, myind, myparam, smooth_nb : int * ('a -> 'b) *
     do
       int_index.(j) <- myind(j) ;
       float_index.(j) <- float_of_int(int_index.(j)) ;
-      (*var_param.(j) <- myparam(int_index.(j)) ;*)
+      var_param.(j) <- myparam(int_index.(j)) ;
     done ;
     for i = 1 to smooth_nb
     do
       for j = 0 to step_nb
       do
-        var_param.(j) <- myparam(int_index.(j)); 
+        (* var_param.(j) <- myparam(int_index.(j));  *)
         memtime := Sys.time() ;
         ignore(myfunc(var_param.(j))) ; 
         time_arr.(j) <- time_arr.(j) +. (Sys.time() -. !memtime) ;

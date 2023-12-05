@@ -1,4 +1,4 @@
-(*#load "btreeS.cmo";;*)
+(* #load "btreeS.cmo";; *)
 open BtreeS;;
 let rec size(bt_tree : 'a t_bt) : int =
   if(bt_isempty(bt_tree))

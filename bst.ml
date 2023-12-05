@@ -1,5 +1,5 @@
-(*#load "btreeS.cmo";;
-#load "useBtree.cmo";;*)
+(* #load "btreeS.cmo";;
+#load "useBtree.cmo";; *)
 open BtreeS;;
 open UseBtree;;
 
@@ -27,6 +27,10 @@ let bst_subleft(bst : 'a t_bst) : 'a t_bst =
 
 let bst_subright(bst : 'a t_bst) : 'a t_bst =
   bt_subright(bst)
+;;
+
+let bst_height(bst : 'a t_bst) : int =
+  height(bst)
 ;;
 
 let rec bst_linsert(bst, e : 'a t_bst * 'a) : 'a t_bst =
