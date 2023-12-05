@@ -6,6 +6,12 @@ open Bst;;
 
 type 'a t_avl = 'a t_bst;;
 
+let counter = ref 0;;
+
+let increment_counter() : unit =
+  counter := !counter + 1
+;;
+
 let avl_isempty(avl : 'a t_avl) : bool =
   bst_isempty(avl)
 ;;
@@ -208,21 +214,41 @@ let avl_rebalance(t : 'a t_avl) : 'a t_avl =
       let imbalance_g : int = bst_imbalance(avl_subleft(t))
       in
       if imbalance = 2 && (imbalance_g = 1 || imbalance_g = 0)
-      then avl_rd(t)
+      then
+      (
+        increment_counter();
+        avl_rd(t);
+      )
       else
         if imbalance = 2 && imbalance_g = -1
-        then avl_rgd(t)
+        then
+        (
+          increment_counter();
+          avl_rgd(t);
+        )
         else
           let imbalance_d : int = bst_imbalance(avl_subright(t)) in
-           if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0) 
-           then avl_rg(t)
-           else avl_rdg(t)
+          if imbalance = -2 && (imbalance_d = -1 || imbalance_d = 0) 
+          then
+          (
+            increment_counter();
+            avl_rg(t);
+          )
+          else 
+          (
+            increment_counter();
+            avl_rdg(t);
+          )
 ;;
-(*
-let tree : int t_avl = bst_lbuild([1;2;3]);;
+
+let get_counter() =
+  !counter
+;;
+
+(* let tree : int t_avl = bst_lbuild([1;2;3;4]);;
 avl_to_string_int(tree);;
 let rebalance_tree : int t_avl = avl_rebalance(tree);;
-avl_to_string_int(rebalance_tree);;*)
+avl_to_string_int(rebalance_tree);; *)
 (*let tree : int t_avl = bst_lbuild([4;2;1;3]);;
 avl_to_string_int(tree);;*)
 (*let tree : int t_avl = bst_lbuild([3;2;1;5]);;
@@ -377,7 +403,6 @@ let rec avl_seek(tree, element : 'a t_avl * 'a) : bool =
 avl_to_string_int(test_avl_rnd_create1);; *)
 
 (* END TESTS AVL_RND_CREATE *)
-
 
 
 (* TESTS SEEK *)
